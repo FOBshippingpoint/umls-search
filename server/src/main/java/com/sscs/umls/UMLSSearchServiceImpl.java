@@ -21,20 +21,20 @@ public class UMLSSearchServiceImpl implements UMLSSearchService {
     @Autowired
     private UMLSTermRepository umlsTermRepository;
 
-
     @Override
     public List<UMLSTermEntity> searchDefinitionsByText(String queryText) throws Exception {
-
         // 使用MetaMapLite將查詢詞彙映射到CUIs
         List<String> cuis = mapQueryToCUIs(queryText);
 
         // 根據CUIs從數據庫中獲取UmlsTerm實體，並返回
         return umlsTermRepository.findByCuiIn(cuis);
-
     }
 
     @Override
     public List<UMLSTermEntity> searchDefinitionsByCUI(String cui) {
+        // 使輸入CUI對大小寫不敏感
+        cui = cui.toUpperCase();
+
         return umlsTermRepository.findByCui(cui);
     }
 
