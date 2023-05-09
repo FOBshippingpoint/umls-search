@@ -23,7 +23,7 @@
 
 ![Demo1 Search By Text](./demo/demo1-searchbytext.png)
 
-**Demo 2: Search By CUI**
+**Demo 2: Search By CUI** (Case Insensitive: 不分大小寫)
 
 ![Demo2 Search By CUI](./demo/demo2-searchbycui.png)
 
