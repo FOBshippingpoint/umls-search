@@ -16,23 +16,33 @@ const Search = () => {
     debouncedSearch(event.target.value);
   };
 
+  const searchUMLS = async (searchText) => {
+    let response;
+
+    // Check if searchText is a valid CUI (only alphanumeric characters and length of 8)
+    const isCUI = /^[a-zA-Z0-9]{8}$/.test(searchText);
+
+    if (isCUI) {
+      response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SSCS_UMLS_BASE_URL}/umls/search/cui/${searchText}`
+      );
+    } else {
+      response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SSCS_UMLS_BASE_URL}/umls/search/text/${searchText}`
+      );
+    }
+
+    return response;
+  };
+
   const search = async (text) => {
     setLoading(true);
     setSearchResults([]);
     setTotalResults(0);
     try {
-      //   const response = await axios.get(
-      //     `${process.env.NEXT_PUBLIC_SSCS_UMLS_BASE_URL}/umls/search/cui/${text}`
-      //   );
-
-      //   if (response?.totalCount === 0) {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SSCS_UMLS_BASE_URL}/umls/search/text/${text}`
-      );
-      //   }
-
+      const response = await searchUMLS(text);
       setSearchResults(response.data?.results);
-      setTotalResults(response.data?.length);
+      setTotalResults(response.data?.totalCount);
     } catch (error) {
       console.error(error);
     } finally {
@@ -43,7 +53,7 @@ const Search = () => {
   const debouncedSearch = useDebouncedCallback(search, 200);
 
   return (
-    <div>
+    <div className="container mx-auto p-4">
       <TextField
         label="Search for CUI or text"
         value={searchText}
@@ -52,13 +62,19 @@ const Search = () => {
       />
       {loading && <CircularProgress />}
       {!loading && (
-        <div>
-          <Typography variant="h6">Total results: {totalResults}</Typography>
-          <ul>
+        <div className="mt-4">
+          <Typography variant="h6" className="text-lg font-semibold">
+            Total results: {totalResults}
+          </Typography>
+          <ul className="list-none">
             {searchResults.map((result) => (
-              <li key={result.id}>
+              <li
+                key={result.id}
+                className="border-b border-gray-200 py-2 text-base"
+              >
                 <Typography>
-                  {result.cui}: {result.definition}
+                  <span className="font-semibold">{result.cui}</span>:{" "}
+                  {result.definition}
                 </Typography>
               </li>
             ))}
