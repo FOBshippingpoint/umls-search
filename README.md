@@ -143,6 +143,17 @@
 
 **遭遇問題**: MetaMapLite 的資料集似乎比較少，有些輸入字串只能找到有限的 CUIs，然而 UMLS 的資料集中有更多的 CUIs，因此需要找到一個方法將 UMLS 的資料集轉換成 MetaMapLite 的資料集。
 
+例子
+
+使用 MetaMapLite 搜尋: `renal tubular acidosis` 只會得到 CUI `C0001126`
+
+<img width="800" alt="searchDefinitionsByText" src="https://user-images.githubusercontent.com/40348319/237016877-5a7ba078-bb1c-4986-b132-20c7d4424768.png">
+
+但使用 UMLS 官網提供的 API 搜尋 `renal tubular acidosis` 會得到多個 CUIs
+
+<img width="800" alt="Search For Concepts" src="https://user-images.githubusercontent.com/40348319/237018188-b0973592-2ce3-45d6-9e07-ca10c645b472.png">
+
+
 ## Devlopment
 
 ### Prerequisites
