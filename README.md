@@ -2,10 +2,10 @@
 
 - [Unified Medical Language System (UMLS) Mock](#unified-medical-language-system-umls-mock)
   - [Demo](#demo)
-  - [Getting Started](#getting-started)
+  - [Features \& Usage](#features--usage)
+  - [Getting Started in Localhost](#getting-started-in-localhost)
     - [Prequisites](#prequisites)
     - [Installation](#installation)
-  - [Features \& Usage](#features--usage)
   - [Devlopment](#devlopment)
     - [Prerequisites](#prerequisites)
     - [1. 找到定義檔案以及其格式](#1-找到定義檔案以及其格式)
@@ -17,6 +17,7 @@
   - [MetaMapLite](#metamaplite)
     - [Download MetaMapLite](#download-metamaplite)
     - [MetaMapLite Documents](#metamaplite-documents)
+  - [Deployment on Ubuntu](#deployment-on-ubuntu)
 
 ## Demo
 
@@ -28,7 +29,39 @@
 
 ![Demo2 Search By CUI](./demo/demo2-searchbycui.png)
 
-## Getting Started
+## Features & Usage
+
+**後端 API**
+
+- [x] 透過 CUI 搜尋其定義
+
+      測試: `http://localhost:8080/api/v1/umls/search/text/renal tubular acidosis`
+
+- [x] 透過輸入文字搜尋其 CUIs 以及其定義
+
+      測試: `http://localhost:8080/api/v1/umls/search/cui/C0000039`
+
+**前端**
+
+- [x] 搜尋介面
+
+**遭遇問題**
+
+- [ ] 使 Search By Text 支援模糊搜尋(暫留優化階段再考慮)
+
+MetaMapLite 不支援模糊搜尋(都較 Lite 要求快了當然不要模糊搜尋!)，因此輸入字串只能找到一個 CUI。然而一個 UMLS API 支援輸入文本字串進行模糊搜尋，可以得到多個 CUIs，對於查詢來說應該是比較好的。
+
+使用 MetaMapLite 搜尋: `renal tubular acidosis` 只會得到 CUI `C0001126`
+
+<img width="800" alt="searchDefinitionsByText" src="https://user-images.githubusercontent.com/40348319/237016877-5a7ba078-bb1c-4986-b132-20c7d4424768.png">
+
+但使用 UMLS 官網提供的 API 搜尋 `renal tubular acidosis` 會得到多個 CUIs
+
+<img width="800" alt="Search For Concepts" src="https://user-images.githubusercontent.com/40348319/237018188-b0973592-2ce3-45d6-9e07-ca10c645b472.png">
+
+解決方法: 使用 MetaMapLite 前先對輸入文本進行預處理，以達到模糊搜尋的效果。模糊搜尋會降低效率，不適合於比對時使用，但對於查詢時是必要的。
+
+## Getting Started in Localhost
 
 > 一些連結待補充
 
@@ -137,38 +170,6 @@
     ```sh
     npm run start
     ```
-
-## Features & Usage
-
-**後端 API**
-
-- [x] 透過 CUI 搜尋其定義
-
-      測試: `http://localhost:8080/api/v1/umls/search/text/renal tubular acidosis`
-
-- [x] 透過輸入文字搜尋其 CUIs 以及其定義
-
-      測試: `http://localhost:8080/api/v1/umls/search/cui/C0000039`
-
-**前端**
-
-- [x] 搜尋介面
-
-**遭遇問題**
-
-- [ ] 使 Search By Text 支援模糊搜尋(暫留優化階段再考慮)
-
-MetaMapLite 不支援模糊搜尋(都較 Lite 要求快了當然不要模糊搜尋!)，因此輸入字串只能找到一個 CUI。然而一個 UMLS API 支援輸入文本字串進行模糊搜尋，可以得到多個 CUIs，對於查詢來說應該是比較好的。
-
-使用 MetaMapLite 搜尋: `renal tubular acidosis` 只會得到 CUI `C0001126`
-
-<img width="800" alt="searchDefinitionsByText" src="https://user-images.githubusercontent.com/40348319/237016877-5a7ba078-bb1c-4986-b132-20c7d4424768.png">
-
-但使用 UMLS 官網提供的 API 搜尋 `renal tubular acidosis` 會得到多個 CUIs
-
-<img width="800" alt="Search For Concepts" src="https://user-images.githubusercontent.com/40348319/237018188-b0973592-2ce3-45d6-9e07-ca10c645b472.png">
-
-解決方法: 使用 MetaMapLite 前先對輸入文本進行預處理，以達到模糊搜尋的效果。模糊搜尋會降低效率，不適合於比對時使用，但對於查詢時是必要的。
 
 ## Devlopment
 
@@ -298,7 +299,7 @@ CREATE TABLE umls_terms (
 ### Download MetaMapLite
 
 1. Download [MetaMapLite](https://lhncbc.nlm.nih.gov/ii/tools/MetaMap/run-locally/MetaMapLite.html)
-2. Create a folder named `metamaplite` in the root directory of this project.
+2. Create a folder named `metamaplite` in the `src/main/resources/` directory of this project. (我 `metamaplite.properties` 中的路徑改好了，所以可以安心放這)
 3. Unzip the downloaded file and move the `public_mm_lite` folder into the `metamaplite` folder.
 4. Put the UMLs Dataset folders into the `public_mm_mm_lite/data/ivf` folder.
 
@@ -308,16 +309,19 @@ It should look like this:
 .
 └── umls-search/
     ├── ...
-    ├── lib/
-    ├── metamaplite/
-    │   └── public_mm_lite/       # MetaMapLite
-    │       ├── ...
-    │       └── data/
-    │           ├── ...
-    │           └── ivf/          # UMLS Dataset
-    │               ├── 2022AA
-    │               └── 2022AB
-    └── src
+    └── src/
+        ├── main/
+        │   ├── java
+        │   └── resources/      # Spring Boot configuration files
+        │       └── metamaplite/
+        │           ├── public_mm_lite
+        │           ├── ...
+        │           ├── data
+        │           ├── ...
+        │           └── ivf/        # UMLS Dataset folders
+        │               ├── 2022AA
+        │               └── 2022AB
+        └── test
 ```
 
 Then, install metamaplite and dependencies into local Maven repository.
@@ -368,3 +372,9 @@ $ mvn install
 
 - [MetaMapLite 3.6.2rc5 README Documentation](https://lhncbc.nlm.nih.gov/ii/tools/MetaMap/Docs/README_MetaMapLite_3.6.2rc5.html)
 - [MetaMapLite Github Page](https://github.com/lhncbc/metamaplite)
+
+## Deployment on Ubuntu
+
+> 因為把整個 MetaMapLite 資料夾納入，所以建置很慢，再找時間瘦身
+
+@TODO
