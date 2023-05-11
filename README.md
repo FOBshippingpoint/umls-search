@@ -13,6 +13,7 @@
     - [3. 將 .csv 匯入 Postgres](#3-將-csv-匯入-postgres)
     - [4. 後端 Entity, Repository, Service, Controller](#4-後端-entity-repository-service-controller)
     - [5. 前端介面](#5-前端介面)
+    - [6. TODO: 應用 MetaMapLite 時添加模糊搜尋的功能](#6-todo-應用-metamaplite-時添加模糊搜尋的功能)
   - [MetaMapLite](#metamaplite)
     - [Download MetaMapLite](#download-metamaplite)
     - [MetaMapLite Documents](#metamaplite-documents)
@@ -143,7 +144,7 @@
 
 **遭遇問題**
 
-MetaMapLite 的資料集似乎比較少，有些輸入字串只能找到有限的 CUIs，然而 UMLS 的資料集中有更多的 CUIs，因此需要找到一個方法將 UMLS 的資料集轉換成 MetaMapLite 的資料集或其他方法。問題例子如下
+MetaMapLite 不支援模糊搜尋(都較 Lite 要求快了當然不要模糊搜尋!)，因此輸入字串只能找到一個 CUI。然而一個 UMLS API 支援輸入文本字串進行模糊搜尋，可以得到多個 CUIs，對於查詢來說應該是比較好的。
 
 使用 MetaMapLite 搜尋: `renal tubular acidosis` 只會得到 CUI `C0001126`
 
@@ -152,6 +153,8 @@ MetaMapLite 的資料集似乎比較少，有些輸入字串只能找到有限�
 但使用 UMLS 官網提供的 API 搜尋 `renal tubular acidosis` 會得到多個 CUIs
 
 <img width="800" alt="Search For Concepts" src="https://user-images.githubusercontent.com/40348319/237018188-b0973592-2ce3-45d6-9e07-ca10c645b472.png">
+
+解決方法: 使用 MetaMapLite 前先對輸入文本進行預處理，以達到模糊搜尋的效果。模糊搜尋會降低效率，不適合於比對時使用，但對於查詢時是必要的。
 
 ## Devlopment
 
@@ -266,6 +269,15 @@ CREATE TABLE umls_terms (
 
 - 後端記得要設置 CORS
 - .ENV: Next 專案的環境變數放置在`.env.local`中，並且要以`NEXT_PUBLIC_`開頭，才能在前端瀏覽器使用。
+
+### 6. TODO: 應用 MetaMapLite 時添加模糊搜尋的功能
+
+使用 [Apache Lucene 9](https://lucene.apache.org/)
+
+- [Apache Lucene MVN Repository](https://mvnrepository.com/artifact/org.apache.lucene/lucene-core)
+- [開源全文檢索、搜尋函式庫 Apache Lucene 9.0 效能大幅提升](https://www.ithome.com.tw/news/148360)
+
+解析 MRCONSO.RRF?
 
 ## MetaMapLite
 
