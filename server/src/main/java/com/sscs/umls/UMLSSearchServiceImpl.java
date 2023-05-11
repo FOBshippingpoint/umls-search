@@ -5,6 +5,8 @@ import gov.nih.nlm.nls.metamap.document.FreeText;
 import gov.nih.nlm.nls.metamap.lite.types.Entity;
 import gov.nih.nlm.nls.metamap.lite.types.Ev;
 import gov.nih.nlm.nls.ner.MetaMapLite;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.FuzzyQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,8 +64,22 @@ public class UMLSSearchServiceImpl implements UMLSSearchService {
         // Instantiate MetaMapLite instance
         MetaMapLite metaMapLiteInst = new MetaMapLite(myProperties);
 
-        // Process the input text
-        BioCDocument document = FreeText.instantiateBioCDocument(queryText);
+
+        // Create a FuzzyQuery with a maximum edit distance of 2 (default)
+        Term term = new Term("text", queryText);
+        FuzzyQuery fuzzyQuery = new FuzzyQuery(term);
+
+
+        // Convert the FuzzyQuery to a string and remove the field name
+        String fuzzyQueryString = fuzzyQuery.toString().replace("text:", "");
+        System.out.println("FuzzyQueryString: " + fuzzyQueryString);
+
+
+        // Process the input text with the fuzzy query string
+        BioCDocument document = FreeText.instantiateBioCDocument(fuzzyQueryString);
+
+//        // Process the input text
+//        BioCDocument document = FreeText.instantiateBioCDocument(queryText);
 
         // Set the document id to 1
         document.setID("1");
@@ -91,7 +107,7 @@ public class UMLSSearchServiceImpl implements UMLSSearchService {
     }
 
 
-    private class SearchResult {
+    private static class SearchResult {
         private int totalCount;
         private List<UMLSTermEntity> results;
 
