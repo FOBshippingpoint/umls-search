@@ -67,7 +67,7 @@ public class UMLSSearchServiceImpl implements UMLSSearchService {
 
         // Process the input text
         BioCDocument document = FreeText.instantiateBioCDocument(queryText);
-        
+
         // Set the document id to 1
         document.setID("1");
 

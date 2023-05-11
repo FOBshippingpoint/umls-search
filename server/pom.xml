@@ -57,8 +57,6 @@
 			<artifactId>metamaplite</artifactId>
 			<version>3.6.2rc8</version>
 		</dependency>
-		</dependency>
-
 	</dependencies>
 
 	<build>
