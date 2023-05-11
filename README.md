@@ -104,7 +104,19 @@
     npm install
     ```
 
-6.  運行前端伺服器 Next.js
+6.  修改前端`.env.local`
+
+    ```sh
+    cp .env.local.example .env.local
+    ```
+
+    預設的後端伺服器網址是 `http://localhost:8080`，如果要修改請修改以下環境變數
+
+    ```sh
+    NEXT_PUBLIC_API_URL=<放置後端伺服器網址>
+    ```
+
+7.  運行前端伺服器 Next.js
 
     於開發模式運行
 
@@ -143,6 +155,8 @@
 - [x] 搜尋介面
 
 **遭遇問題**
+
+- [ ] 使 Search By Text 支援模糊搜尋(暫留優化階段再考慮)
 
 MetaMapLite 不支援模糊搜尋(都較 Lite 要求快了當然不要模糊搜尋!)，因此輸入字串只能找到一個 CUI。然而一個 UMLS API 支援輸入文本字串進行模糊搜尋，可以得到多個 CUIs，對於查詢來說應該是比較好的。
 
