@@ -65,22 +65,9 @@ public class UMLSSearchServiceImpl implements UMLSSearchService {
         MetaMapLite metaMapLiteInst = new MetaMapLite(myProperties);
 
 
-        // Create a FuzzyQuery with a maximum edit distance of 2 (default)
-        Term term = new Term("text", queryText);
-        FuzzyQuery fuzzyQuery = new FuzzyQuery(term);
-
-
-        // Convert the FuzzyQuery to a string and remove the field name
-        String fuzzyQueryString = fuzzyQuery.toString().replace("text:", "");
-        System.out.println("FuzzyQueryString: " + fuzzyQueryString);
-
-
-        // Process the input text with the fuzzy query string
-        BioCDocument document = FreeText.instantiateBioCDocument(fuzzyQueryString);
-
-//        // Process the input text
-//        BioCDocument document = FreeText.instantiateBioCDocument(queryText);
-
+        // Process the input text
+        BioCDocument document = FreeText.instantiateBioCDocument(queryText);
+        
         // Set the document id to 1
         document.setID("1");
 
