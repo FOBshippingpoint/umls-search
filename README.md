@@ -41,6 +41,8 @@
 
       測試: `http://localhost:8080/api/v1/umls/search/cui/C0000039`
 
+目前已經佈署在 YHH Server 上了，要使用 API 只要把 `localhost:8080` 改成 Server IP 就可以了。
+
 **前端**
 
 - [x] 搜尋介面
@@ -299,29 +301,36 @@ CREATE TABLE umls_terms (
 ### Download MetaMapLite
 
 1. Download [MetaMapLite](https://lhncbc.nlm.nih.gov/ii/tools/MetaMap/run-locally/MetaMapLite.html)
-2. Create a folder named `metamaplite` in the `src/main/resources/` directory of this project. (我 `metamaplite.properties` 中的路徑改好了，所以可以安心放這)
+2. Create a folder named `metamaplite` in the backend root directory of this project.
 3. Unzip the downloaded file and move the `public_mm_lite` folder into the `metamaplite` folder.
 4. Put the UMLs Dataset folders into the `public_mm_mm_lite/data/ivf` folder.
 
 It should look like this:
 
+public_mm_lite 中只需要 `data` 底下的檔案，其他都不需要。所以也可以只下載資料集，重點是要將 MetaMapLite 安裝到本地的 Maven Repository 中。
+
 ```bash
 .
 └── umls-search/
-    ├── ...
-    └── src/
-        ├── main/
-        │   ├── java
-        │   └── resources/      # Spring Boot configuration files
-        │       └── metamaplite/
-        │           ├── public_mm_lite
-        │           ├── ...
-        │           ├── data
-        │           ├── ...
-        │           └── ivf/        # UMLS Dataset folders
-        │               ├── 2022AA
-        │               └── 2022AB
-        └── test
+    ├── client
+    └── server/     # backend root directory
+        ├── ...
+        ├── metamaplite/
+        │   └── public_mm_lite/
+        │       └── data/       # UMLS Dataset folders
+        │           ├── ivf/
+        │           │   ├── 2022AA
+        │           │   └── 2022AB
+        │           └── ...
+        ├── src/
+        │   ├── main/
+        │   │   ├── java
+        │   │   └── resources/
+        │   │       ├── metamaplite.properties      # MetaMapLite configuration file
+        │   │       ├── .env # Environment variables
+        │   │       └── ...
+        │   └── test
+        └── ...
 ```
 
 Then, install metamaplite and dependencies into local Maven repository.
@@ -375,6 +384,171 @@ $ mvn install
 
 ## Deployment on Ubuntu
 
-> 因為把整個 MetaMapLite 資料夾納入，所以建置很慢，再找時間瘦身
+> 研究有夠久==，如果有人要用 Docker 可以補充一下
 
-@TODO
+1.  首先先將本地專案建置成可執行的 jar 檔案，然後將 jar 檔案上傳到 Ubuntu 伺服器上。
+
+    ```bash
+    $ cd server
+    $ mvn clean install
+    ```
+
+2.  接著到 Ubuntu 伺服器上安裝 Java 20。
+
+    ```bash
+    $ sudo apt update
+    $ sudo apt install openjdk-20-jdk
+    ```
+
+    檢查 Java 版本
+
+    ```bash
+    $ java -version
+    ```
+
+    結果應該像下面這樣
+
+    ```bash
+    java version "20.0.1" 2023-04-18
+    Java(TM) SE Runtime Environment (build 20.0.1+9-29)
+    Java HotSpot(TM) 64-Bit Server VM (build 20.0.1+9-29, mixed mode, sharing)
+    ```
+
+3.  在 Ubuntu 伺服器上建立一個資料夾，並將 jar 檔案移動到該資料夾中。我是放在 `/home/ncuuser/deploy/uml-search-backend`
+
+    ```bash
+    $ mkdir umls-search
+    ```
+
+    上傳 jar 檔案到 Ubuntu 伺服器上的 `umls-search` 資料夾中，我是用 Mobaxterm，可以直接拖拉檔案到伺服器上。MacOS 的 Terminus 沒有拖拉介面可以用`scp`指令，或是用 FTP 軟體如 FileZilla。
+
+4.  把 `metamaplite/public_mm_lite` (裡面有 data) 丟到與 jar 檔案同一個資料夾中。因為程式中有設定路徑，而且 MetaMapLite 不支援 classpath，所以必須把資料夾丟到同一個資料夾中。
+
+    > 這邊我搞超久==想說為甚麼一直讀不到
+
+5.  因為我們要讓這個程式變成一個 Service，所以我們要安裝 `systemd`。
+
+    ```bash
+    $ sudo apt install systemd
+    ```
+
+    並且建立一個 `umls-search.service` 檔案(檔名可以自己取)，並且放到 `/etc/systemd/system` 資料夾中。
+
+    ```bash
+    $ sudo vim /etc/systemd/system/umls-search.service
+    ```
+
+    添加內容如下(可以參考[這篇文章](https://www.baeldung.com/spring-boot-app-as-a-service)
+
+    ```bash
+    [Unit]
+    Description=UMLS Search Service
+    After=network.target
+
+    [Service]
+    User=ncuuser
+    WorkingDirectory=/home/ncuuser/deploy/uml-search-backend
+    ExecStart=/usr/bin/java -jar /home/ncuuser/deploy/uml-search-backend/umls-search-0.1.0.jar
+    SuccessExitStatus=143
+    Restart=always
+    StandardOutput=syslog
+    StandardError=syslog
+    SyslogIdentifier=umls-search
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+    > `User` 要改成你的使用者名稱，`WorkingDirectory` 要改成你的 jar 檔案所在的資料夾，`ExecStart` 要改成你的 jar 檔案所在的路徑。
+
+6.  重新載入 `systemd`，並且啟動 `umls-search.service`。
+
+    ```bash
+     $ sudo systemctl daemon-reload
+     $ sudo systemctl enable umls-search.service
+     $ sudo systemctl start umls-search.service
+    ```
+
+    檢查 `umls-search.service` 是否有正常運作
+
+    ```bash
+    $ sudo systemctl status umls-search.service
+    ```
+
+    內容應該會像下面這樣
+
+    ```bash
+    ● umls-search.service - UMLS Search Service
+        Loaded: loaded (/etc/systemd/system/umls-search.service; enabled; vendor preset: enabled)
+        Active: active (running) since Sat 2023-05-13 14:35:11 UTC; 6s ago
+    Main PID: 349063 (java)
+        Tasks: 56 (limit: 38109)
+        Memory: 314.4M
+        CPU: 11.207s
+        CGroup: /system.slice/umls-search.service
+                └─349063 /usr/bin/java -jar /home/ncuuser/deploy/uml-search-backend/umls-search-0.1.0.jar
+
+    May 13 14:35:12 ubuntu-server umls-search[349063]: 2023-05-13T14:35:12.804Z  INFO 349063 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.1.7.Final
+    May 13 14:35:12 ubuntu-server umls-search[349063]: 2023-05-13T14:35:12.949Z  INFO 349063 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+    May 13 14:35:13 ubuntu-server umls-search[349063]: 2023-05-13T14:35:13.073Z  INFO 349063 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@60>
+    May 13 14:35:13 ubuntu-server umls-search[349063]: 2023-05-13T14:35:13.074Z  INFO 349063 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+    May 13 14:35:13 ubuntu-server umls-search[349063]: 2023-05-13T14:35:13.088Z  INFO 349063 --- [           main] SQL dialect                              : HHH000400: Using dialect: org.hibernate.dialect.PostgreSQLDialect
+    May 13 14:35:13 ubuntu-server umls-search[349063]: 2023-05-13T14:35:13.472Z  INFO 349063 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.>
+    May 13 14:35:13 ubuntu-server umls-search[349063]: 2023-05-13T14:35:13.476Z  INFO 349063 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+    May 13 14:35:13 ubuntu-server umls-search[349063]: 2023-05-13T14:35:13.710Z  WARN 349063 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database >
+    May 13 14:35:13 ubuntu-server umls-search[349063]: 2023-05-13T14:35:13.893Z  INFO 349063 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+    May 13 14:35:13 ubuntu-server umls-search[349063]: 2023-05-13T14:35:13.899Z  INFO 349063 --- [           main] com.sscs.Application                     : Started Application in 2.374 seconds (process running for 2.654)
+    ```
+
+7.  使用 curl 指令測試一下
+
+    ```bash
+    $ curl "http://localhost:8080/api/v1/umls/search/text/renal%20tubular%20acidosis"
+     {"totalCount":4,"results":[{"id":105507,"cui":"C0001126","definition":"A group of genetic disorders of the KIDNEY TUBULES characterized by the accumulation of metabolically produced acids with elevated plasma chloride, hyperchloremic metabolic ACIDOSIS. Defective renal acidification of URINE (proximal tubules) or low renal acid excretion (distal tubules) can lead to complications such as HYPOKALEMIA, hypercalcinuria with NEPHROLITHIASIS and NEPHROCALCINOSIS, and RICKETS."},{"id":105508,"cui":"C0001126","definition":"rare sometimes familial disorder of the renal tubule characterized by the inability to excrete urine of normal acidity; this leads to a hyperchloremic acidosis which is often associated with one or more secondary complications such as hypercalcinuria with nephrolithiasis and nephrocalcinosis, rickets, or osteomalacia and severe potassium depletion."},{"id":105509,"cui":"C0001126","definition":"Acidosis owing to malfunction of the kidney tubules with accumulation of metabolic acids and hyperchloremia, potentially leading to complications including hypokalemia, hypercalcinuria, nephrolithiasis and nephrocalcinosis. [HPO:probinson]"},{"id":105510,"cui":"C0001126","definition":"The inability of the kidneys to maintain acid-base homeostasis."}]}
+    ```
+
+    看起來沒問題，那就要測試從別台電腦是否可以正常存取了。
+
+8.  於 Ubuntu Server 上打開 8080 port
+
+    ```bash
+    $ sudo ufw allow 8080
+    ```
+
+9.  於別台電腦上使用 Postman 測試
+
+    GET `http://140.115.80.103:8080/api/v1/umls/search/text/renal tubular acidosis`
+
+    得到以下結果
+
+    ```json
+    {
+      "totalCount": 4,
+      "results": [
+        {
+          "id": 105507,
+          "cui": "C0001126",
+          "definition": "A group of genetic disorders of the KIDNEY TUBULES characterized by the accumulation of metabolically produced acids with elevated plasma chloride, hyperchloremic metabolic ACIDOSIS. Defective renal acidification of URINE (proximal tubules) or low renal acid excretion (distal tubules) can lead to complications such as HYPOKALEMIA, hypercalcinuria with NEPHROLITHIASIS and NEPHROCALCINOSIS, and RICKETS."
+        },
+        {
+          "id": 105508,
+          "cui": "C0001126",
+          "definition": "rare sometimes familial disorder of the renal tubule characterized by the inability to excrete urine of normal acidity; this leads to a hyperchloremic acidosis which is often associated with one or more secondary complications such as hypercalcinuria with nephrolithiasis and nephrocalcinosis, rickets, or osteomalacia and severe potassium depletion."
+        },
+        {
+          "id": 105509,
+          "cui": "C0001126",
+          "definition": "Acidosis owing to malfunction of the kidney tubules with accumulation of metabolic acids and hyperchloremia, potentially leading to complications including hypokalemia, hypercalcinuria, nephrolithiasis and nephrocalcinosis. [HPO:probinson]"
+        },
+        {
+          "id": 105510,
+          "cui": "C0001126",
+          "definition": "The inability of the kidneys to maintain acid-base homeostasis."
+        }
+      ]
+    }
+    ```
+
+    完畢
+
+    前端加油！
