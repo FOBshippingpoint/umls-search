@@ -31,11 +31,13 @@
 
 ## Features & Usage
 
+可以將 [UMLS SAMPLES](./UMLS.postman_collection.json) 匯入 Postman 來測試 API。
+
 **後端 API**
 
 - [x] 透過 CUI 搜尋其定義
 
-      測試: `http://localhost:8080/api/v1/umls/search/text/renal tubular acidosis`
+      測試: `http://localhost:8080/api/v1/umls/search/text?queryText=stroke`
 
 - [x] 透過輸入文字搜尋其 CUIs 以及其定義
 
