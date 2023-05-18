@@ -6,11 +6,11 @@ import gov.nih.nlm.nls.metamap.lite.types.Entity;
 import gov.nih.nlm.nls.metamap.lite.types.Ev;
 import gov.nih.nlm.nls.ner.MetaMapLite;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
 
-import java.lang.ClassNotFoundException;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -19,17 +19,19 @@ import java.util.stream.Collectors;
 @Service
 public class UMLSSearchServiceImpl implements UMLSSearchService {
 
+    private final UMLSTermRepository umlsTermRepository;
+
+    private final MetaMapLite metaMapLiteInst;
+
     @Autowired
-    private UMLSTermRepository umlsTermRepository;
-
-    private MetaMapLite metaMapLiteInst;
-
-    public UMLSSearchServiceImpl() throws IOException, ClassNotFoundException, InstantiationException, NoSuchMethodException, IllegalAccessException {
+    public UMLSSearchServiceImpl(UMLSTermRepository umlsTermRepository) throws IOException, ClassNotFoundException, InstantiationException, NoSuchMethodException, IllegalAccessException {
+        this.umlsTermRepository = umlsTermRepository;
         Properties properties = new Properties();
         InputStream inStream = new ClassPathResource("metamaplite.properties").getInputStream();
         properties.load(inStream);
         metaMapLiteInst = new MetaMapLite(properties);
     }
+
 
     @Override
     public List<UMLSTermEntity> searchDefinitionsByText(String queryText) throws Exception {
