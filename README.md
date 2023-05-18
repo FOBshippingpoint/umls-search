@@ -51,13 +51,13 @@
 
 - [ ] 使 Search By Text 支援模糊搜尋(暫留優化階段再考慮)
 
-MetaMapLite 不支援模糊搜尋(都較 Lite 要求快了當然不要模糊搜尋!)，因此輸入字串只能找到一個 CUI。然而一個 UMLS API 支援輸入文本字串進行模糊搜尋，可以得到多個 CUIs，對於查詢來說應該是比較好的。
+MetaMapLite 不支援模糊搜尋(都較 Lite 要求快了當然不要模糊搜尋!)，因此輸入文字時要盡可能完整(模糊範圍是以一個單字內為距離)。然而一個 UMLS API 支援輸入文本字串進行模糊搜尋，對於查詢方便性來說應該是比較好的。
 
 使用 MetaMapLite 搜尋: `renal tubular acidosis` 只會得到 CUI `C0001126`
 
 <img width="800" alt="searchDefinitionsByText" src="https://user-images.githubusercontent.com/40348319/237016877-5a7ba078-bb1c-4986-b132-20c7d4424768.png">
 
-但使用 UMLS 官網提供的 API 搜尋 `renal tubular acidosis` 會得到多個 CUIs
+但使用 UMLS 官網提供的 API 搜尋 `renal tubular acidosis` 會得到多個概念 CUIs
 
 <img width="800" alt="Search For Concepts" src="https://user-images.githubusercontent.com/40348319/237018188-b0973592-2ce3-45d6-9e07-ca10c645b472.png">
 
@@ -181,7 +181,7 @@ MetaMapLite 不支援模糊搜尋(都較 Lite 要求快了當然不要模糊搜�
 
 - UMLS Dataset
 - MetaMapLite：用於將用戶輸入的詞彙映射到相應的 CUI。安裝方法可參考[Download MetaMapLite](#download-metamaplite)
-- Java Spring Boot 3 with Java SDK 20+: 後端服務器框架
+- Java Spring Boot 3 with Java SDK 17+: 後端伺服器框架，建議使用 Java17 LTS 版本
 - PostgreSQL: 用於存儲 UMLS 數據的數據庫。CUI, Definition
 - Python 3.8+: 用於將 UMLS 數據轉換為 CSV 文件
 - Node.js 14+: 用於構建前端界面
@@ -190,7 +190,9 @@ MetaMapLite 不支援模糊搜尋(都較 Lite 要求快了當然不要模糊搜�
 
 ### 1. 找到定義檔案以及其格式
 
-到官網[UMLS Knowledge Sources: File Downloads](https://www.nlm.nih.gov/research/umls/licensedcontent/umlsknowledgesources.html)下載 **UMLS Metathesaurus Level 0 Subset(NEW as of 2022AB)** 或其他版本。
+到官網[UMLS Knowledge Sources: File Downloads](https://www.nlm.nih.gov/research/umls/licensedcontent/umlsknowledgesources.html)下載 **UMLS Metathesaurus Level 0 Subset(NEW as of 2022AA)** 或其他版本。
+
+> 目前 2022AA 比 2022AB 還完整
 
 看一下表格定義 [Definitions (File = MRDEF.RRF)](https://www.ncbi.nlm.nih.gov/books/NBK9685/table/ch03.T.definitions_file_mrdef_rrf/?report=objectonly)
 
