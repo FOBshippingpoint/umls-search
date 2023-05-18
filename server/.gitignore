@@ -41,3 +41,6 @@ metamaplite/
 ### env ###
 src/main/resources/*.env
 *.env
+
+### external metamaplite jar ###
+lib

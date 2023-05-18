@@ -14,7 +14,7 @@
 	<name>demo</name>
 	<description>UMLS</description>
 	<properties>
-		<java.version>20</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -52,11 +52,13 @@
 			<artifactId>spring-dotenv</artifactId>
 			<version>3.0.0</version>
 		</dependency>
-		<dependency>
-			<groupId>gov.nih.nlm.nls</groupId>
-			<artifactId>metamaplite</artifactId>
-			<version>3.6.2rc8</version>
-		</dependency>
+    <dependency>
+      <groupId>gov.nih.nlm.nls</groupId>
+      <artifactId>metamaplite</artifactId>
+      <version>3.6.2rc8</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/metamaplite-3.6.2rc8-standalone.jar</systemPath>
+    </dependency>
 	</dependencies>
 	<build>
 		<plugins>
