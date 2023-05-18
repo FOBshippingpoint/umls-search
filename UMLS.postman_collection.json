@@ -1,0 +1,198 @@
+{
+	"info": {
+		"_postman_id": "ff686d04-dbe7-410f-9484-bcfa721cf671",
+		"name": "UMLS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19559317"
+	},
+	"item": [
+		{
+			"name": "searchDefinitionsByText",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/umls/search/text?queryText=renal tubular acidosis",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"umls",
+						"search",
+						"text"
+					],
+					"query": [
+						{
+							"key": "queryText",
+							"value": "renal tubular acidosis"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "searchDefinitionsByText",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/umls/search/text?queryText=stroke",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"umls",
+								"search",
+								"text"
+							],
+							"query": [
+								{
+									"key": "queryText",
+									"value": "stroke"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Vary",
+							"value": "Access-Control-Request-Method"
+						},
+						{
+							"key": "Vary",
+							"value": "Access-Control-Request-Headers"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 18 May 2023 17:16:16 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"totalCount\": 7,\n    \"results\": [\n        {\n            \"id\": 134787,\n            \"cui\": \"C0038454\",\n            \"definition\": \"A group of pathological conditions characterized by sudden, non-convulsive loss of neurological function due to BRAIN ISCHEMIA or INTRACRANIAL HEMORRHAGES. Stroke is classified by the type of tissue NECROSIS, such as the anatomic location, vasculature involved, etiology, age of the affected individual, and hemorrhagic vs. non-hemorrhagic nature. (From Adams et al., Principles of Neurology, 6th ed, pp777-810)\"\n        },\n        {\n            \"id\": 134788,\n            \"cui\": \"C0038454\",\n            \"definition\": \"<h3>What is a stroke?</h3> <p>A stroke happens when there is a loss of blood flow to part of the brain. Your brain cells cannot get the oxygen and nutrients they need from blood, and they start to die within a few minutes. This can cause lasting brain damage, long-term disability, or even death.</p> <p>If you think that you or someone else is having a stroke, call 911 right away. Immediate treatment may save someone's life and increase the chances for successful rehabilitation and recovery.</p> <h3>What are the types of stroke?</h3> <p>There are two types of stroke:</p><ul> <li><a href=\\\"https://medlineplus.gov/ischemicstroke.html\\\">Ischemic stroke</a> is caused by a <a href=\\\"https://medlineplus.gov/bloodclots.html\\\">blood clot</a> that blocks or plugs a blood vessel in the brain. This is the most common type; about 80% of strokes are ischemic.</li> <li><a href=\\\"https://medlineplus.gov/hemorrhagicstroke.html\\\">Hemorrhagic stroke</a> is caused by a blood vessel that breaks and bleeds into the brain</li> </ul> <p>Another condition that's similar to a stroke is a <a href=\\\"https://medlineplus.gov/transientischemicattack.html\\\">transient ischemic attack</a> (TIA). It's sometimes called a \\\"mini-stroke.\\\" TIAs happen when the blood supply to the brain is blocked for a short time. The damage to the brain cells isn't permanent, but if you have had a TIA, you are at a much higher risk of having a stroke.</p> <h3>Who is at risk for a stroke?</h3> <p>Certain factors can raise your risk of a stroke. The major risk factors include:</p><ul> <li><strong><a href=\\\"https://medlineplus.gov/highbloodpressure.html\\\">High blood pressure</a>.</strong> This is the primary risk factor for a stroke.</li> <li><strong><a href=\\\"https://medlineplus.gov/diabetes.html\\\">Diabetes</a>.</strong></li> <li><strong><a href=\\\"https://medlineplus.gov/heartdiseases.html\\\">Heart diseases</a>.</strong> <a href=\\\"https://medlineplus.gov/atrialfibrillation.html\\\">Atrial fibrillation</a> and other heart diseases can cause blood clots that lead to stroke.</li> <li><strong><a href=\\\"https://medlineplus.gov/smoking.html\\\">Smoking</a>.</strong> When you smoke, you damage your blood vessels and raise your blood pressure.</li> <li><strong>A personal or family history of stroke or TIA.</strong></li> <li><strong>Age.</strong> Your risk of stroke increases as you get older.</li> <li><strong>Race and ethnicity.</strong> African Americans have a higher risk of stroke.</li> </ul> <p>There are also other factors that are linked to a higher risk of stroke, such as:</p><ul> <li>Alcohol and illegal drug use</li> <li>Not getting enough physical activity</li> <li><a href=\\\"https://medlineplus.gov/cholesterol.html\\\">High cholesterol</a></li> <li>Unhealthy diet</li> <li>Having <a href=\\\"https://medlineplus.gov/obesity.html\\\">obesity</a></li> </ul> <h3>What are the symptoms of stroke?</h3> <p>The symptoms of stroke often happen quickly. They include:</p><ul> <li>Sudden numbness or weakness of the face, arm, or leg (especially on one side of the body)</li> <li>Sudden confusion, trouble speaking, or understanding speech</li> <li>Sudden trouble seeing in one or both eyes</li> <li>Sudden difficulty walking, dizziness, loss of balance or coordination</li> <li>Sudden severe headache with no known cause</li> </ul> <p>If you think that you or someone else is having a stroke, call 911 right away.</p> <h3>How are strokes diagnosed?</h3> <p>To make a diagnosis, your health care provider will:</p><ul> <li>Ask about your symptoms and medical history</li> <li>Do a physical exam, including a check of <ul> <li>Your mental alertness</li> <li>Your coordination and balance</li> <li>Any numbness or weakness in your face, arms, and legs</li> <li>Any trouble speaking and seeing clearly</li> </ul> </li> <li>Run some tests, which may include <ul> <li><a href=\\\"https://medlineplus.gov/diagnosticimaging.html\\\">Diagnostic imaging</a> of the brain, such as a <a href=\\\"https://medlineplus.gov/ctscans.html\\\">CT scan</a> or <a href=\\\"https://medlineplus.gov/mriscans.html\\\">MRI</a></li> <li><a href=\\\"https://medlineplus.gov/hearthealthtests.html\\\">Heart tests</a>, which can help detect heart problems or blood clots that may have led to a stroke. Possible tests include an <a href=\\\"https://medlineplus.gov/lab-tests/electrocardiogram/\\\">electrocardiogram</a> (EKG) and an echocardiography.</li> </ul> </li> </ul> <h3>What are the treatments for stroke?</h3> <p>Treatments for stroke include medicines, surgery, and rehabilitation. Which treatments you get depend on the type of stroke and the stage of treatment. The different stages are:</p><ul> <li><strong>Acute treatment</strong>, to try to stop a stroke while it is happening</li> <li><strong>Post-stroke rehabilitation</strong>, to overcome the disabilities caused by the stroke</li> <li><strong>Prevention</strong>, to prevent a first stroke or, if you have already had one, prevent another stroke</li> </ul> <p>Acute treatments for ischemic stroke are usually medicines:</p><ul> <li>You may get tPA, (tissue plasminogen activator), a medicine to dissolve the blood clot. You can only get this medicine within 4 hours of when your symptoms started. The sooner you can get it, the better your chance of recovery.</li> <li>If you cannot get that medicine, you may get medicine that helps stop platelets from clumping together to form blood clots. Or you may get a <a href=\\\"https://medlineplus.gov/bloodthinners.html\\\">blood thinner</a> to keep existing clots from getting bigger.</li> <li>If you have carotid artery disease, you may also need a procedure to open your blocked carotid artery</li> </ul> <p>Acute treatments for hemorrhagic stroke focus on stopping the bleeding. The first step is to find the cause of bleeding in the brain. The next step is to control it:</p><ul> <li>If high blood pressure is the cause of bleeding, you may be given <a href=\\\"https://medlineplus.gov/bloodpressuremedicines.html\\\">blood pressure medicines</a>.</li> <li>If an <a href=\\\"https://medlineplus.gov/aneurysms.html\\\">aneurysm</a> if the cause, you may need aneurysm clipping or coil embolization. These are surgeries to prevent further leaking of blood from the aneurysm. It also can help prevent the aneurysm from bursting again.</li> <li>If an <a href=\\\"https://medlineplus.gov/arteriovenousmalformations.html\\\">arteriovenous malformation</a> (AVM) is the cause of a stroke, you may need an AVM repair. An AVM is a tangle of faulty arteries and veins that can rupture within the brain. An AVM repair may be done through <ul> <li>Surgery</li> <li>Injecting a substance into the blood vessels of the AVM to block blood flow</li> <li>Radiation to shrink the blood vessels of the AVM</li> </ul> </li> </ul> <p><a href=\\\"https://medlineplus.gov/strokerehabilitation.html\\\">Stroke rehabilitation</a> can help you relearn skills you lost because of the damage. The goal is to help you become as independent as possible and to have the best possible quality of life.</p> <p>Prevention of another stroke is also important, since having a stroke increases the risk of getting another one. Prevention may include heart-healthy lifestyle changes and medicines.</p> <h3>Can strokes be prevented?</h3> <p>If you have already had a stroke or are at risk of having a stroke, you can make some <a href=\\\"https://medlineplus.gov/howtopreventheartdisease.html\\\">heart-healthy lifestyle changes</a> to try to prevent a future stroke:</p><ul> <li>Eating a heart-healthy diet</li> <li>Aiming for a healthy weight</li> <li>Managing <a href=\\\"https://medlineplus.gov/stress.html\\\">stress</a></li> <li>Getting regular <a href=\\\"https://medlineplus.gov/howmuchexercisedoineed.html\\\">physical activity</a></li> <li><a href=\\\"https://medlineplus.gov/quittingsmoking.html\\\">Quitting smoking</a></li> <li>Managing your <a href=\\\"https://medlineplus.gov/howtopreventhighbloodpressure.html\\\">blood pressure</a> and <a href=\\\"https://medlineplus.gov/howtolowercholesterol.html\\\">cholesterol levels</a></li> </ul> <p>If these changes aren't enough, you may need medicine to control your risk factors.</p> <p class=\\\"\\\">NIH: National Institute of Neurological Disorders and Stroke</p>\"\n        },\n        {\n            \"id\": 134789,\n            \"cui\": \"C0038454\",\n            \"definition\": \"Sudden impairment of blood flow to a part of the brain due to occlusion or rupture of an artery to the brain. [HPO:probinson]\"\n        },\n        {\n            \"id\": 134790,\n            \"cui\": \"C0038454\",\n            \"definition\": \"A sudden loss of neurological function secondary to hemorrhage or ischemia in the brain parenchyma due to a vascular event.\"\n        },\n        {\n            \"id\": 134786,\n            \"cui\": \"C0038454\",\n            \"definition\": \"sudden neurologic impairment due to a cerebrovascular disorder, either an arterial occlusion or an intracranial hemorrhage.\"\n        },\n        {\n            \"id\": 324069,\n            \"cui\": \"C4554100\",\n            \"definition\": \"A disorder characterized by a decrease or absence of blood supply to the brain caused by obstruction (thrombosis or embolism) of an artery resulting in neurological damage.\"\n        },\n        {\n            \"id\": 194451,\n            \"cui\": \"C1261367\",\n            \"definition\": \"A history of a first-degree relative that has had a stroke.\"\n        }\n    ]\n}"
+				},
+				{
+					"name": "searchDefinitionsByText",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/umls/search/text?queryText=renal tubular acidosis",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"umls",
+								"search",
+								"text"
+							],
+							"query": [
+								{
+									"key": "queryText",
+									"value": "renal tubular acidosis"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Vary",
+							"value": "Access-Control-Request-Method"
+						},
+						{
+							"key": "Vary",
+							"value": "Access-Control-Request-Headers"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 18 May 2023 17:17:06 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"totalCount\": 4,\n    \"results\": [\n        {\n            \"id\": 105507,\n            \"cui\": \"C0001126\",\n            \"definition\": \"A group of genetic disorders of the KIDNEY TUBULES characterized by the accumulation of metabolically produced acids with elevated plasma chloride, hyperchloremic metabolic ACIDOSIS. Defective renal acidification of URINE (proximal tubules) or low renal acid excretion (distal tubules) can lead to complications such as HYPOKALEMIA, hypercalcinuria with NEPHROLITHIASIS and NEPHROCALCINOSIS, and RICKETS.\"\n        },\n        {\n            \"id\": 105508,\n            \"cui\": \"C0001126\",\n            \"definition\": \"rare sometimes familial disorder of the renal tubule characterized by the inability to excrete urine of normal acidity; this leads to a hyperchloremic acidosis which is often associated with one or more secondary complications such as hypercalcinuria with nephrolithiasis and nephrocalcinosis, rickets, or osteomalacia and severe potassium depletion.\"\n        },\n        {\n            \"id\": 105509,\n            \"cui\": \"C0001126\",\n            \"definition\": \"Acidosis owing to malfunction of the kidney tubules with accumulation of metabolic acids and hyperchloremia, potentially leading to complications including hypokalemia, hypercalcinuria, nephrolithiasis and nephrocalcinosis. [HPO:probinson]\"\n        },\n        {\n            \"id\": 105510,\n            \"cui\": \"C0001126\",\n            \"definition\": \"The inability of the kidneys to maintain acid-base homeostasis.\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "searchDefinitionsByCUI",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/umls/search/cui/C0000039",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"umls",
+						"search",
+						"cui",
+						"C0000039"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
