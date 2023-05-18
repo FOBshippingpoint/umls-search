@@ -14,8 +14,8 @@ public class UMLSSearchController {
     private UMLSSearchService UMLSSearchService;
 
 
-    @GetMapping("/search/text/{queryText}")
-    public ResponseEntity<SearchResult> searchDefinitionsByText(@PathVariable String queryText) {
+    @GetMapping("/search/text")
+    public ResponseEntity<SearchResult> searchDefinitionsByText(@RequestParam String queryText) {
         try {
             System.out.println("========= Searching terms: \"" + queryText + "\" ... =========");
             List<UMLSTermEntity> result = UMLSSearchService.searchDefinitionsByText(queryText);
