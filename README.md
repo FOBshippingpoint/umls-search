@@ -18,6 +18,7 @@
     - [Download MetaMapLite](#download-metamaplite)
     - [MetaMapLite Documents](#metamaplite-documents)
   - [Deployment on Ubuntu](#deployment-on-ubuntu)
+  - [References](#references)
 
 ## Demo
 
@@ -43,7 +44,12 @@
 
       測試: `http://localhost:8080/api/v1/umls/search/cui/C0000039`
 
-目前已經佈署在 YHH Server 上了，要使用 API 只要把 `localhost:8080` 改成 Server IP 就可以了。
+增加功能:
+
+- [ ] 回傳結果除了 CUI 以及其定義外，還要有 Concept name。
+- [ ] 回傳結果要有搜尋 CUI 的 Parent CUIs, Child CUIs, Sibling CUIs。
+
+> 給團隊: 目前已經佈署在 YHH Server 上了，要使用 API 只要把 `localhost:8080` 改成 Server IP 就可以了。
 
 **前端**
 
@@ -53,9 +59,9 @@
 
 - [ ] 使 Search By Text 支援模糊搜尋(暫留優化階段再考慮)
 
-MetaMapLite 不支援模糊搜尋(都較 Lite 要求快了當然不要模糊搜尋!)，因此輸入文字時要盡可能完整(模糊範圍是以一個單字內為距離)。然而一個 UMLS API 支援輸入文本字串進行模糊搜尋，對於查詢方便性來說應該是比較好的。
+MetaMapLite 不支援模糊搜尋(都叫 Lite 代表要求快，所以沒有模糊搜尋合理!)，因此輸入文字時要盡可能完整(模糊範圍是以一個單字內為距離)。然而一個 UMLS API 支援輸入文本字串進行模糊搜尋，對於查詢方便性來說應該是比較好的。
 
-使用 MetaMapLite 搜尋: `renal tubular acidosis` 只會得到 CUI `C0001126`
+使用 MetaMapLite 搜尋: `renal tubular acidosis` 只會得到 CUI `C0001126`，若只搜尋 `renal` 是無法得到 `renal tubular acidosis` 的 CUI 的。
 
 <img width="800" alt="searchDefinitionsByText" src="https://user-images.githubusercontent.com/40348319/237016877-5a7ba078-bb1c-4986-b132-20c7d4424768.png">
 
@@ -73,7 +79,7 @@ MetaMapLite 不支援模糊搜尋(都較 Lite 要求快了當然不要模糊搜�
 
 - (可跳過)下載 UMLS Dataset，因為已經轉換好放在伺服器資料庫上了。如果想導入在自己的資料庫檔案在 `./umls-data/MRDEF.csv`
 - 安裝 MetaMapLite：用於將用戶輸入的詞彙映射到相應的 CUI。安裝方法與置放路徑請參考[Download MetaMapLite](#download-metamaplite)
-- Java Spring Boot 3 with Java SDK 20+: 後端服務器框架，其他 Java 版本要修改 pom.xml
+- Java Spring Boot 3 with Java SDK 17+ (17 is LTS version): 後端服務器框架，其他 Java 版本要修改 pom.xml
 - 連接伺服器上的 PostgreSQL(稍後新增連線資訊在`.env`)
   - 另外可以搭配使用 Intellij 連接(Database -> '+' -> Data Source -> PostgreSQL -> 填入連線資訊)
 - Node.js 14+
@@ -194,7 +200,7 @@ MetaMapLite 不支援模糊搜尋(都較 Lite 要求快了當然不要模糊搜�
 
 到官網[UMLS Knowledge Sources: File Downloads](https://www.nlm.nih.gov/research/umls/licensedcontent/umlsknowledgesources.html)下載 **UMLS Metathesaurus Level 0 Subset(NEW as of 2022AA)** 或其他版本。
 
-> 目前 2022AA 比 2022AB 還完整
+> 目前採用 2022AB，AA 為該年度第一版，AB 為該年度第二版。故以最新為主
 
 看一下表格定義 [Definitions (File = MRDEF.RRF)](https://www.ncbi.nlm.nih.gov/books/NBK9685/table/ch03.T.definitions_file_mrdef_rrf/?report=objectonly)
 
@@ -389,6 +395,8 @@ $ mvn install
 ## Deployment on Ubuntu
 
 > 研究有夠久==，如果有人要用 Docker 可以補充一下
+>
+> 目前已將 Java 版本降回 LTS 17，API 也有小修改，此部份僅供部署參考
 
 1.  首先先將本地專案建置成可執行的 jar 檔案，然後將 jar 檔案上傳到 Ubuntu 伺服器上。
 
@@ -553,6 +561,6 @@ $ mvn install
     }
     ```
 
-    完畢
+## References
 
-    前端加油！
+- 除了這章節外，要操作使用 UMLS 建議都看一下: [3Metathesaurus - Rich Release Format (RRF)](https://www.ncbi.nlm.nih.gov/books/NBK9685/)
