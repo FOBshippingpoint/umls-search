@@ -1,3 +1,16 @@
+# Usage
+
+可以先裝虛擬環境，沒有也沒關係。
+
+將`MRCONSO.RRF`、`MRDEF.RRF`、`MRREL.RRF`、`MRSTY.RRF`放進`umls/data`資料夾下。
+
+```sh
+pip install pandas # 安裝處理資料的套件
+python umls/scripts/rrf_to_csv.py # 執行
+```
+
+輸出完成的csv會在`umls/data`底下。
+
 # Tables
 
 參考此文件: https://www.ncbi.nlm.nih.gov/books/NBK9685/
