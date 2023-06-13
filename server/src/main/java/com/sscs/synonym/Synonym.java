@@ -1,9 +1,8 @@
 package com.sscs.synonym;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sscs.cui.Cui;
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +18,7 @@ public class Synonym {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "synonym_id")
+    @JsonIgnore
     private Long id;
 
     @ManyToOne

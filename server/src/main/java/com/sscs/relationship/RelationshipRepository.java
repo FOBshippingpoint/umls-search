@@ -1,7 +1,6 @@
 package com.sscs.relationship;
 
 import com.sscs.cui.Cui;
-import com.sscs.definition.Definition;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

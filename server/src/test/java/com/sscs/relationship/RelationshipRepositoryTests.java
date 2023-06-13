@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -57,8 +58,9 @@ class RelationshipRepositoryTests {
 
     @Test
     void findByCui2() {
-        var cui = cuiRepository.findByCui("C5397597").orElse(null);
-        assertThat(repository.findByCui2(cui)).hasSize(1);
+        Optional<Cui> cui = cuiRepository.findByCui("C5397597");
+        assertThat(cui).isPresent();
+        assertThat(repository.findByCui2(cui.get())).hasSize(1);
     }
 
     @Test
@@ -68,7 +70,8 @@ class RelationshipRepositoryTests {
 
     @Test
     void findByCui2AndRelType() {
-        var cui = cuiRepository.findByCui("C5397597").orElse(null);
-        assertThat(repository.findByCui2AndRelType(cui, RelType.NARROWER)).hasSize(1);
+        Optional<Cui> cui = cuiRepository.findByCui("C5397597");
+        assertThat(cui).isPresent();
+        assertThat(repository.findByCui2AndRelType(cui.get(), RelType.NARROWER)).hasSize(1);
     }
 }

@@ -1,7 +1,7 @@
 package com.sscs.relationship;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sscs.cui.Cui;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = "relationships")
 @Getter
-@Setter // use lombok to avoid boilerplate
+@Setter
 @NoArgsConstructor
 @ToString
 public class Relationship {
@@ -24,6 +24,7 @@ public class Relationship {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "relationship_id")
+	@JsonIgnore
 	private Long id;
 
 	@ManyToOne

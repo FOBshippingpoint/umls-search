@@ -1,7 +1,7 @@
 package com.sscs.definition;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sscs.cui.Cui;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +18,7 @@ public class Definition {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "definition_id")
+	@JsonIgnore
 	private Long id;
 
 	@ManyToOne

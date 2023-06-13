@@ -1,16 +1,11 @@
 package com.sscs.cui;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import com.sscs.definition.Definition;
 import com.sscs.definition.DefinitionRepository;
 import com.sscs.relationship.RelationshipRepository;
 import com.sscs.synonym.SynonymRepository;
 import lombok.extern.slf4j.Slf4j;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest
@@ -41,7 +38,7 @@ class CuiRepositoryTests {
     @Test
     void findSavedCuiById() {
         var cui = cuiRepository.save(new Cui("C0948008", "Ischemic Stroke", "Disease or Syndrome"));
-        assertThat(cuiRepository.findByCui(cui.getCui())).hasValue(cui);
+        assertThat(cuiRepository.findByCui(cui.getCui())).isEqualTo(cui);
     }
 
     @Test
