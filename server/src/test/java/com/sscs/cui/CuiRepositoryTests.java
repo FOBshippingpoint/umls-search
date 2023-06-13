@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +39,9 @@ class CuiRepositoryTests {
     @Test
     void findSavedCuiById() {
         var cui = cuiRepository.save(new Cui("C0948008", "Ischemic Stroke", "Disease or Syndrome"));
-        assertThat(cuiRepository.findByCui(cui.getCui())).isEqualTo(cui);
+        Optional<Cui> optionalCui = cuiRepository.findByCui(cui.getCui());
+        assertThat(optionalCui).isPresent();
+        assertThat(optionalCui.get()).isEqualTo(cui);
     }
 
     @Test
@@ -70,6 +73,8 @@ class CuiRepositoryTests {
         cui.setDefinitions(definitions);
         cuiRepository.save(cui);
 
-        assertThat(definitionRepository.findByCui(cui)).hasSize(4);
+        Optional<Cui> optionalCui = cuiRepository.findByCui(cui.getCui());
+        assertThat(optionalCui).isPresent();
+        assertThat(optionalCui.get().getDefinitions()).hasSize(4);
     }
 }
