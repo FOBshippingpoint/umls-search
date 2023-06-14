@@ -1,15 +1,16 @@
-package com.sscs.cui;
+package com.sscs.concept;
 
 import com.sscs.definition.Definition;
 import com.sscs.relationship.Relationship;
 import com.sscs.relationship.RelationshipRepository;
+import com.sscs.semantictype.SemanticType;
 import com.sscs.synonym.Synonym;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -22,13 +23,13 @@ import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CuiControllerTests {
+public class ConceptControllerTests {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    CuiController controller;
+    ConceptController controller;
     @Autowired
-    CuiRepository cuiRepository;
+    ConceptRepository conceptRepository;
     @Autowired
     RelationshipRepository relationshipRepository;
 
@@ -38,20 +39,24 @@ public class CuiControllerTests {
     }
 
     @BeforeEach
-    void setUp() {
-        var cui = new Cui("C0948008", "Ischemic Stroke", "Disease or Syndrome");
+    void setup() {
+        var cui = new Concept("C0948008", "Ischemic Stroke");
 
         /* Definition */
         var def1 = new Definition();
-        def1.setCui(cui);
+        def1.setConcept(cui);
         def1.setSourceName("NCI");
         def1.setMeaning("An acute episode of focal cerebral, spinal, or retinal dysfunction caused by infarction of brain tissue.");
 
         var def2 = new Definition();
-        def2.setCui(cui);
+        def2.setConcept(cui);
         def2.setSourceName("HPO");
         def2.setMeaning("Acute ischemic stroke (AIS) is defined by the sudden loss of blood flow to an area of the brain with the resulting loss...");
         cui.getDefinitions().addAll(Arrays.asList(def1, def2));
+
+        /* SemanticType */
+        var st = new SemanticType(cui, "Disease or Syndrome");
+        cui.getSemanticTypes().add(st);
 
         /* Synonym */
         var s1 = new Synonym(cui, "Ischemic stroke", "MTH");
@@ -61,27 +66,33 @@ public class CuiControllerTests {
 
         /* Relationship */
         var b1 = new Relationship();
-        b1.setCui1(cui);
-        b1.setCui2(cuiRepository.save(new Cui("C2733158", "Cerebral Small Vessel Diseases", "Disease or Syndrome")));
+        b1.setConcept1(cui);
+        b1.setConcept2(conceptRepository.save(new Concept("C2733158", "Cerebral Small Vessel Diseases")));
         b1.setRelType(Relationship.RelType.BROADER);
 
         var b2 = new Relationship();
-        b2.setCui1(cui);
-        b2.setCui2(cuiRepository.save(new Cui("C0948008", "Ischemic stroke", "Disease or Syndrome")));
+        b2.setConcept1(cui);
+        b2.setConcept2(conceptRepository.save(new Concept("C0948008", "Ischemic stroke")));
         b2.setRelType(Relationship.RelType.BROADER);
 
         var b3 = new Relationship();
-        b3.setCui1(cui);
-        b3.setCui2(cuiRepository.save(new Cui("C0852393", "Central nervous system haemorrhages and cerebrovascular accidents", "Disease or Syndrome")));
+        b3.setConcept1(cui);
+        b3.setConcept2(conceptRepository.save(new Concept("C0852393", "Central nervous system haemorrhages and cerebrovascular accidents")));
         b3.setRelType(Relationship.RelType.BROADER);
 
         var n1 = new Relationship();
-        n1.setCui1(cui);
-        n1.setCui2(cuiRepository.save(new Cui("C5397597", "Pontine ischemic lacunes", "Pathologic Function")));
+        n1.setConcept1(cui);
+        n1.setConcept2(conceptRepository.save(new Concept("C5397597", "Pontine ischemic lacunes")));
         n1.setRelType(Relationship.RelType.NARROWER);
 
         relationshipRepository.saveAll(Arrays.asList(b1, b2, b3, n1));
-        cuiRepository.save(cui);
+        conceptRepository.save(cui);
+    }
+
+    @AfterEach
+    void tearDown() {
+        relationshipRepository.deleteAll();
+        conceptRepository.deleteAll();
     }
 
     @Test
@@ -93,6 +104,7 @@ public class CuiControllerTests {
                 .andExpect(jsonPath("$.preferredName").value("Ischemic Stroke"))
                 .andExpect(jsonPath("$.definitions").isNotEmpty())
                 .andExpect(jsonPath("$.synonyms").isNotEmpty())
+                .andExpect(jsonPath("$.semanticTypes").isNotEmpty())
                 .andExpect(jsonPath("$.broaderConcepts", hasSize(3)))
                 .andExpect(jsonPath("$.narrowerConcepts", hasSize(1)));
     }

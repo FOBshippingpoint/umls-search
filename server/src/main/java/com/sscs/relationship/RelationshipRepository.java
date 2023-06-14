@@ -1,16 +1,16 @@
 package com.sscs.relationship;
 
-import com.sscs.cui.Cui;
+import com.sscs.concept.Concept;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
 public interface RelationshipRepository extends CrudRepository<Relationship, Long> {
-    List<Relationship> findByCui1(Cui cui);
+    List<Relationship> findByConcept1(Concept concept);
 
-    List<Relationship> findByCui2(Cui cui);
+    List<Relationship> findByConcept2(Concept concept);
 
-    List<Relationship> findByCui1AndRelType(Cui cui1, Relationship.RelType relType);
+    List<Relationship> findByConcept1AndRelType(Concept concept1, Relationship.RelType relType);
 
-    List<Relationship> findByCui2AndRelType(Cui cui2, Relationship.RelType relType);
+    List<Relationship> findByConcept2AndRelType(Concept concept2, Relationship.RelType relType);
 }

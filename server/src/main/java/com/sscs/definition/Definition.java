@@ -1,7 +1,7 @@
 package com.sscs.definition;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sscs.cui.Cui;
+import com.sscs.concept.Concept;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,10 +22,10 @@ public class Definition {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "cui")
-	private Cui cui;
+	@JoinColumn(name = "concept")
+	private Concept concept;
 
-	@Column(name = "meaning")
+	@Column(name = "meaning", columnDefinition = "TEXT")
 	private String meaning;
 
 	@Column(name = "source_name")

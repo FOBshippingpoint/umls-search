@@ -1,7 +1,7 @@
 package com.sscs.relationship;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sscs.cui.Cui;
+import com.sscs.concept.Concept;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,12 +28,12 @@ public class Relationship {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "cui1")
-	private Cui cui1;
+	@JoinColumn(name = "concept1")
+	private Concept concept1;
 
 	@ManyToOne
-	@JoinColumn(name = "cui2")
-	private Cui cui2;
+	@JoinColumn(name = "concept2")
+	private Concept concept2;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "rel_type")

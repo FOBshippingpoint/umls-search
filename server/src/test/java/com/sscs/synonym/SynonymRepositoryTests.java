@@ -1,7 +1,8 @@
 package com.sscs.synonym;
 
-import com.sscs.cui.Cui;
-import com.sscs.cui.CuiRepository;
+import com.sscs.concept.Concept;
+import com.sscs.concept.ConceptRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,13 +16,13 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class SynonymRepositoryTests {
     @Autowired
-    CuiRepository cuiRepository;
+    ConceptRepository conceptRepository;
     @Autowired
     SynonymRepository repository;
 
     @Test
     void findByCui() {
-        var cui = cuiRepository.save(new Cui("C0948008", "Ischemic Stroke", "Disease or Syndrome"));
+        var cui = conceptRepository.save(new Concept("C0948008", "Ischemic Stroke"));
 
         var s1 = new Synonym(cui, "Ischemic stroke", "MTH");
         var s2 = new Synonym(cui, "stroke ischemic", "CHV");
@@ -42,6 +43,11 @@ class SynonymRepositoryTests {
 
         repository.saveAll(Arrays.asList(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16));
 
-        assertThat(repository.findByCui(cui)).hasSize(16);
+        assertThat(repository.findByConcept(cui)).hasSize(16);
+    }
+
+    @AfterEach
+    void tearDown() {
+        repository.deleteAll();
     }
 }
