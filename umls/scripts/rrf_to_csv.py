@@ -36,7 +36,7 @@ print("transforming RRF to CSV...")
 
 # ============================================================================
 df = slurp("MRCONSO.RRF")
-# C5392097 this shit doesn't have PN, only PEP
+# C5392097 this thing doesn't have PN, only PEP
 df.columns = ["CUI", "LAT", "ISPREF", "SAB", "TTY", "STR"]
 df = df[df["LAT"] == "ENG"]  # Only keep rows where the language is English
 

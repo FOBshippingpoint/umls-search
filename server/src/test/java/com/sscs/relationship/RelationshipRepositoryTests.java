@@ -64,9 +64,9 @@ class RelationshipRepositoryTests {
 
     @Test
     void findByConcept2() {
-        Optional<Concept> cui = conceptRepository.findByCui("C5397597");
-        assertThat(cui).isPresent();
-        assertThat(repository.findByConcept2(cui.get())).hasSize(1);
+        Optional<Concept> concept = conceptRepository.findByCui("C5397597");
+        assertThat(concept).isPresent();
+        assertThat(repository.findByConcept2(concept.get())).hasSize(1);
     }
 
     @Test
@@ -76,8 +76,8 @@ class RelationshipRepositoryTests {
 
     @Test
     void findByConcept2AndRelType() {
-        Optional<Concept> cui = conceptRepository.findByCui("C5397597");
-        assertThat(cui).isPresent();
-        assertThat(repository.findByConcept2AndRelType(cui.get(), RelType.NARROWER)).hasSize(1);
+        Optional<Concept> concept = conceptRepository.findByCui("C5397597");
+        assertThat(concept).isPresent();
+        assertThat(repository.findByConcept2AndRelType(concept.get(), RelType.NARROWER)).hasSize(1);
     }
 }

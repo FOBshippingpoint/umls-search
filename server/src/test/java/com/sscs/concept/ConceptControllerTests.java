@@ -40,53 +40,53 @@ public class ConceptControllerTests {
 
     @BeforeEach
     void setup() {
-        var cui = new Concept("C0948008", "Ischemic Stroke");
+        var concept = new Concept("C0948008", "Ischemic Stroke");
 
         /* Definition */
         var def1 = new Definition();
-        def1.setConcept(cui);
+        def1.setConcept(concept);
         def1.setSourceName("NCI");
         def1.setMeaning("An acute episode of focal cerebral, spinal, or retinal dysfunction caused by infarction of brain tissue.");
 
         var def2 = new Definition();
-        def2.setConcept(cui);
+        def2.setConcept(concept);
         def2.setSourceName("HPO");
         def2.setMeaning("Acute ischemic stroke (AIS) is defined by the sudden loss of blood flow to an area of the brain with the resulting loss...");
-        cui.getDefinitions().addAll(Arrays.asList(def1, def2));
+        concept.getDefinitions().addAll(Arrays.asList(def1, def2));
 
         /* SemanticType */
-        var st = new SemanticType(cui, "Disease or Syndrome");
-        cui.getSemanticTypes().add(st);
+        var st = new SemanticType(concept, "Disease or Syndrome");
+        concept.getSemanticTypes().add(st);
 
         /* Synonym */
-        var s1 = new Synonym(cui, "Ischemic stroke", "MTH");
-        var s2 = new Synonym(cui, "stroke ischemic", "CHV");
-        var s3 = new Synonym(cui, "Stroke, ischemic", "OMIM");
-        cui.getSynonyms().addAll(Arrays.asList(s1, s2, s3));
+        var s1 = new Synonym(concept, "Ischemic stroke", "MTH");
+        var s2 = new Synonym(concept, "stroke ischemic", "CHV");
+        var s3 = new Synonym(concept, "Stroke, ischemic", "OMIM");
+        concept.getSynonyms().addAll(Arrays.asList(s1, s2, s3));
 
         /* Relationship */
         var b1 = new Relationship();
-        b1.setConcept1(cui);
+        b1.setConcept1(concept);
         b1.setConcept2(conceptRepository.save(new Concept("C2733158", "Cerebral Small Vessel Diseases")));
         b1.setRelType(Relationship.RelType.BROADER);
 
         var b2 = new Relationship();
-        b2.setConcept1(cui);
+        b2.setConcept1(concept);
         b2.setConcept2(conceptRepository.save(new Concept("C0948008", "Ischemic stroke")));
         b2.setRelType(Relationship.RelType.BROADER);
 
         var b3 = new Relationship();
-        b3.setConcept1(cui);
+        b3.setConcept1(concept);
         b3.setConcept2(conceptRepository.save(new Concept("C0852393", "Central nervous system haemorrhages and cerebrovascular accidents")));
         b3.setRelType(Relationship.RelType.BROADER);
 
         var n1 = new Relationship();
-        n1.setConcept1(cui);
+        n1.setConcept1(concept);
         n1.setConcept2(conceptRepository.save(new Concept("C5397597", "Pontine ischemic lacunes")));
         n1.setRelType(Relationship.RelType.NARROWER);
 
         relationshipRepository.saveAll(Arrays.asList(b1, b2, b3, n1));
-        conceptRepository.save(cui);
+        conceptRepository.save(concept);
     }
 
     @AfterEach

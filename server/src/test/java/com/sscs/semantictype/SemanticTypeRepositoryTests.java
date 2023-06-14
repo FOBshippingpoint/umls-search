@@ -21,12 +21,12 @@ class SemanticTypeRepositoryTests {
 
     @Test
     void findByCui() {
-        var cui = conceptRepository.save(new Concept("C0947722", "NRDC 149"));
+        var concept = conceptRepository.save(new Concept("C0947722", "NRDC 149"));
 
-        var st1 = new SemanticType(cui, "Organic Chemical");
-        var st2 = new SemanticType(cui, "Hazardous or Poisonous Substance");
+        var st1 = new SemanticType(concept, "Organic Chemical");
+        var st2 = new SemanticType(concept, "Hazardous or Poisonous Substance");
 
         repository.saveAll(Arrays.asList(st1, st2));
-        assertThat(repository.findByConcept(cui)).hasSize(2);
+        assertThat(repository.findByConcept(concept)).hasSize(2);
     }
 }
