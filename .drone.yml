@@ -22,7 +22,7 @@ steps:
   - name: run
     image: eclipse-temurin:17
     ports:
-      - 1313:1313
+      - 1313
     environment:
       SERVER_PORT: 1313
       DB_HOST: localhost
