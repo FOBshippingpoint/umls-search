@@ -73,8 +73,20 @@ print(
     f"\noutput at {path_to_files}:\ncuis.csv\nsynonyms.csv\nrelationships.csv\ndefinitions.csv\nsemantic_types.csv"
 )
 
-# \copy cuis(cui, preferred_name) from 'C:\Users\blueb\Repo\umls-search\umls\data\cuis.csv' with (format csv, delimiter ',', header);
-# \copy definitions(cui, source_name, meaning) from 'C:\Users\blueb\Repo\umls-search\umls\data\definitions.csv' with (format csv, delimiter ',', header);
-# \copy relationships(cui1, rel_type, cui2) from 'C:\Users\blueb\Repo\umls-search\umls\data\relationships.csv' with (format csv, delimiter ',', header);
-# \copy synonyms(cui, term, source_name) from 'C:\Users\blueb\Repo\umls-search\umls\data\synonyms.csv' with (format csv, delimiter ',', header);
-# \copy semantic_types(cui, type) from 'C:\Users\blueb\Repo\umls-search\umls\data\synonyms.csv' with (format csv, delimiter ',', header);
+# create table concepts (cui varchar(255) not null, preferred_name TEXT, primary key (cui));
+# create table definitions (definition_id bigserial not null, meaning TEXT, source_name varchar(255), concept varchar(255), primary key (definition_id));
+# create table relationships (relationship_id bigserial not null, rel_type varchar(255), concept1 varchar(255), concept2 varchar(255), primary key (relationship_id));
+# create table semantic_types (semantic_type_id bigserial not null, type TEXT, concept varchar(255), primary key (semantic_type_id));
+# create table synonyms (synonym_id bigserial not null, source_name varchar(255), term TEXT, concept varchar(255), primary key (synonym_id));
+# create table umls_terms (id bigint not null, cui varchar(255), definition varchar(255), primary key (id));
+# alter table if exists definitions add constraint FK1pi777hgvp3471m8m9oa7qew5 foreign key (concept) references concepts;
+# alter table if exists relationships add constraint FKtjqdai8rava8qin4w9lgs5j8u foreign key (concept1) references concepts;
+# alter table if exists relationships add constraint FKljpoh4gyhx45peg7yh3l3j1v5 foreign key (concept2) references concepts;
+# alter table if exists semantic_types add constraint FKq9238djde3kt88550r5v6ovbk foreign key (concept) references concepts;
+# alter table if exists synonyms add constraint FKiq2nko2f23nqk6l6gm1uhadh9 foreign key (concept) references concepts
+
+# \copy concepts(cui, preferred_name) from 'C:\Users\blueb\Repo\umls-search\umls\data\concepts.csv' with (format csv, delimiter ',', encoding 'UTF-8', header);
+# \copy definitions(concept, source_name, meaning) from 'C:\Users\blueb\Repo\umls-search\umls\data\definitions.csv' with (format csv, delimiter ',', encoding 'UTF-8', header);
+# \copy relationships(concept1, rel_type, concept2) from 'C:\Users\blueb\Repo\umls-search\umls\data\relationships.csv' with (format csv, delimiter ',', encoding 'UTF-8', header);
+# \copy synonyms(concept, term, source_name) from 'C:\Users\blueb\Repo\umls-search\umls\data\synonyms.csv' with (format csv, delimiter ',', encoding 'UTF-8', header);
+# \copy semantic_types(concept, type) from 'C:\Users\blueb\Repo\umls-search\umls\data\synonyms.csv' with (format csv, delimiter ',', encoding 'UTF-8', header);
