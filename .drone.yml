@@ -5,9 +5,8 @@ name: umls-search-server
 steps:
   - name: build
     image: maven:3.9.2-eclipse-temurin-17-alpine
+    privileged: true
     volumes:
-      - name: metamaplite_data
-        path: /tmp/metamaplite
       - name: metamaplite_jar
         path: /tmp/metamaplite.jar
     environment:
@@ -34,6 +33,10 @@ steps:
         from_secret: database_username
       DB_PASSWORD:
         from_secret: database_password
+    privileged: true
+    volumes:
+      - name: metamaplite_data
+        path: /tmp/metamaplite
     commands:
       - java -jar server/target/umls-search-0.1.0.jar
 
