@@ -4,18 +4,7 @@ name: umls-search-server
 
 steps:
   - name: build
-    image: bluebetweenneck/mvnbuildboot
-    environment:
-      MMLITE_DATA_PATH:
-        from_secret: mmlite_data_path
-      MMLITE_JAR_PATH:
-        from_secret: mmlite_jar_path
-    settings:
-      mmlite_data_path: mmlite_data_path
-      mmlite_jar_path: mmlite_jar_path
-
-  - name: run
-    image: eclipse-temurin:17
+    image: bluebetweenneck/umlssearch
     ports:
       - 1313
     environment:
@@ -27,8 +16,11 @@ steps:
         from_secret: database_username
       DB_PASSWORD:
         from_secret: database_password
-    commands:
-      - java -jar server/target/umls-search-0.1.0.jar
+    settings:
+      mmlite_data_path:
+        from_secret: mmlite_data_path
+      mmlite_jar_path: 
+        from_secret: mmlite_jar_path
 
 trigger:
   branch:
