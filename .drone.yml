@@ -10,7 +10,7 @@ steps:
         MMLITE_DATA_PATH:
           from_secret: mmlite_data_path
     commands:
-      - cp ${MMLITE_DATA_PATH} server
+      - cp -r $MMLITE_DATA_PATH server
   - name: build
     image: maven:3.9.2-eclipse-temurin-17-alpine
     environment:
@@ -18,7 +18,7 @@ steps:
         from_secret: mmlite_jar_path
     commands:
       - mvn install:install-file \
-         -Dfile= \
+         -Dfile=$MMLITE_JAR_PATH \
          -DgroupId=gov.nih.nlm.nls \
          -DartifactId=metamaplite \
          -Dversion=3.6.2rc8 \
