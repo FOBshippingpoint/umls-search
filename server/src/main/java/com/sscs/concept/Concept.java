@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "cuis")
+@Table(name = "concepts")
 @Getter
 @Setter // use lombok to avoid boilerplate
 @NoArgsConstructor

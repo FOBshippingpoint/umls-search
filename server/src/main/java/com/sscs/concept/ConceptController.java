@@ -38,7 +38,7 @@ public class ConceptController {
     @GetMapping("/search/{freeText}")
     public ResponseEntity<List<ConceptDTO>> searchConceptsByFreeText(@PathVariable String freeText) {
         try {
-            Set<String> cuis = metaMapLiteService.mapFreeTextToCuis(freeText);
+            List<String> cuis = metaMapLiteService.mapFreeText(freeText);
 
             List<ConceptDTO> conceptDTOs = new ArrayList<>();
             for (String cui : cuis) {
