@@ -12,7 +12,7 @@ steps:
     environment:
       MMLITE_DIR: /tmp/metamaplite
     commands:
-      - mvn install:install-file \
+      - mvn -f server/pom.xml install:install-file \
          -Dfile=/tmp/metamaplite.jar \
          -DgroupId=gov.nih.nlm.nls \
          -DartifactId=metamaplite \
