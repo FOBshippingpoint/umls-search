@@ -10,31 +10,16 @@ steps:
         path: /tmp/metamaplite.jar
       - name: metamaplite_data
         path: /tmp/metamaplite
+      - name: target_jar_path
+        path: /var/umls-search
     environment:
       MMLITE_DIR: /tmp/metamaplite
     commands:
       - mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=/tmp/metamaplite.jar
-      - mvn -f server/pom.xml install
-
-  - name: run
-    image: eclipse-temurin:17
-    volumes:
-      - name: metamaplite_data
-        path: /tmp/metamaplite
-    ports:
-      - 1313
-    environment:
-      SERVER_PORT: 1313
-      DB_HOST: localhost
-      DB_NAME:
-        from_secret: database_name
-      DB_USERNAME:
-        from_secret: database_username
-      DB_PASSWORD:
-        from_secret: database_password
-      MMLITE_DIR: /tmp/metamaplite
-    commands:
-      - java -jar server/target/umls-search-0.1.0.jar
+      - mvn -f server/pom.xml install \
+            -Pci \
+            -Ddir=/var/umls-search \
+            -DfinalName=server
 
 volumes:
   - name: metamaplite_data
@@ -43,6 +28,9 @@ volumes:
   - name: metamaplite_jar
     host:
       path: /home/ncuuser/ci/metamaplite-3.6.2rc8-standalone.jar
+  - name: target_jar_path
+    host:
+      path: /home/ncuuser/deploy/umls-search
 
 trigger:
   branch:

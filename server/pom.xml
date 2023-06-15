@@ -11,7 +11,7 @@
     <groupId>com.sscs</groupId>
     <artifactId>umls-search</artifactId>
     <version>0.1.0</version>
-    <name>demo</name>
+    <name>umls search</name>
     <description>UMLS</description>
     <properties>
         <java.version>17</java.version>
@@ -86,5 +86,15 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <build>
+                <directory>${dir}</directory>
+                <finalName>${finalName}</finalName>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
