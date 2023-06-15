@@ -4,10 +4,22 @@ name: umls-search-server
 
 steps:
   - name: build
-    image: bluebetweenneck/umlssearch
-    settings:
-      mmlite_data_path: "/home/ncuuser/ci/metamaplite"
-      mmlite_jar_path: "/home/ncuuser/ci/metamaplite-3.6.2rc8-standalone.jar"
+    image: maven:3.9.2-eclipse-temurin-17-alpine
+    volumes:
+      - name: metamaplite_data
+        path: /tmp/metamaplite
+      - name: metamaplite_jar
+        path: /tmp/metamaplite.jar
+    environment:
+      MMLITE_DIR: /tmp/metamaplite
+    commands:
+      - mvn install:install-file \
+         -Dfile=/tmp/metamaplite.jar \
+         -DgroupId=gov.nih.nlm.nls \
+         -DartifactId=metamaplite \
+         -Dversion=3.6.2rc8 \
+         -Dpackaging=jar \
+         -DgeneratePom=true
 
   - name: run
     image: eclipse-temurin:17
@@ -24,6 +36,14 @@ steps:
         from_secret: database_password
     commands:
       - java -jar server/target/umls-search-0.1.0.jar
+
+volumes:
+  - name: metamaplite_data
+    host:
+      path: /home/ncuuser/ci/metamaplite
+  - name: metamaplite_jar
+    host:
+      path: /home/ncuuser/ci/metamaplite-3.6.2rc8-standalone.jar
 
 trigger:
   branch:

@@ -36,7 +36,7 @@ build/
 data
 
 ### MetaMapLite ###
-metamaplite/
+./metamaplite
 
 ### env ###
 src/main/resources/*.env
@@ -44,3 +44,4 @@ src/main/resources/*.env
 
 ### external metamaplite jar ###
 lib
+create.sql
