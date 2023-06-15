@@ -5,6 +5,7 @@ name: umls-search-server
 
 steps:
   - name: copy data
+    image: alpine
     environment:
         MMLITE_DATA_PATH:
           from_secret: mmlite_data_path
