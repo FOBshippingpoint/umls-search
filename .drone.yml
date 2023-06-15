@@ -12,13 +12,8 @@ steps:
     environment:
       MMLITE_DIR: /tmp/metamaplite
     commands:
-      - mvn -f server/pom.xml install:install-file \
-         -Dfile=/tmp/metamaplite.jar \
-         -DgroupId=gov.nih.nlm.nls \
-         -DartifactId=metamaplite \
-         -Dversion=3.6.2rc8 \
-         -Dpackaging=jar \
-         -DgeneratePom=true
+      - mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=/tmp/metamaplite.jar
+      - mvn -f server/pom.xml install
 
   - name: run
     image: eclipse-temurin:17
