@@ -5,12 +5,13 @@ name: umls-search-server
 
 steps:
   - name: copy data
-    image: alpine
     environment:
         MMLITE_DATA_PATH:
           from_secret: mmlite_data_path
     commands:
-      - cp -r $MMLITE_DATA_PATH server
+      - pwd
+      - cp -R $MMLITE_DATA_PATH server
+
   - name: build
     image: maven:3.9.2-eclipse-temurin-17-alpine
     environment:
