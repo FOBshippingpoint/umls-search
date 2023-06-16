@@ -34,9 +34,15 @@ public class MetaMapLiteService {
         metaMapLiteInst = new MetaMapLite(properties);
     }
 
-    public List<String> mapFreeText(java.lang.String freeText) throws Exception {
+    public List<String> mapFreeText(java.lang.String freeText) throws MetaMapLiteProcessingException {
         BioCDocument document = FreeText.instantiateBioCDocument(freeText);
-        List<Entity> entityList = metaMapLiteInst.processDocument(document);
+
+        List<Entity> entityList;
+        try {
+            entityList = metaMapLiteInst.processDocument(document);
+        } catch (Exception e) {
+            throw new MetaMapLiteProcessingException();
+        }
 
         List<String> cuis = new ArrayList<>();
         for (Entity entity : entityList) {

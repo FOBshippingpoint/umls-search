@@ -6,16 +6,13 @@ import com.sscs.synonym.Synonym;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
-@RequestMapping("cuis")
+@RequestMapping("concepts")
 public class ConceptController {
 
     @Autowired
@@ -24,35 +21,25 @@ public class ConceptController {
     private MetaMapLiteService metaMapLiteService;
 
     @GetMapping("/{cui}")
-    public ResponseEntity<ConceptDTO> findConceptByCui(@PathVariable String cui) {
-        Optional<Concept> foundCui = conceptService.findConceptByCui(cui);
-
-        if (foundCui.isPresent()) {
-            ConceptDTO conceptDTO = concept2ConceptDTO(foundCui.get());
-            return ResponseEntity.ok(conceptDTO);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @ResponseStatus(HttpStatus.OK)
+    public ConceptDTO findConceptByCui(@PathVariable String cui) {
+        Concept foundCui = conceptService.findConceptByCui(cui).orElseThrow(() -> new ConceptNotFoundException(cui));
+        ConceptDTO conceptDTO = concept2ConceptDTO(foundCui);
+        return conceptDTO;
     }
 
-    @GetMapping("/search/{freeText}")
-    public ResponseEntity<List<ConceptDTO>> searchConceptsByFreeText(@PathVariable String freeText) {
-        try {
-            List<String> cuis = metaMapLiteService.mapFreeText(freeText);
-
-            List<ConceptDTO> conceptDTOs = new ArrayList<>();
-            for (String cui : cuis) {
-                Optional<Concept> foundCui = conceptService.findConceptByCui(cui);
-                if (foundCui.isPresent()) {
-                    ConceptDTO conceptDTO = concept2ConceptDTO(foundCui.get());
-                    conceptDTOs.add(conceptDTO);
-                }
-            }
-
-            return ResponseEntity.ok(conceptDTOs);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<ConceptDTO> searchConceptsByFreeText(@RequestParam(defaultValue = "") String queryText) {
+        List<String> cuis = metaMapLiteService.mapFreeText(queryText);
+        List<ConceptDTO> conceptDTOs = new ArrayList<>();
+        for (String cui : cuis) {
+            Concept foundCui = conceptService.findConceptByCui(cui).orElseThrow(() -> new ConceptNotFoundException(cui));
+            ConceptDTO conceptDTO = concept2ConceptDTO(foundCui);
+            conceptDTOs.add(conceptDTO);
         }
+
+        return conceptDTOs;
     }
 
     private List<String> collectConceptToCui(Collection<Concept> concepts) {
@@ -74,7 +61,7 @@ public class ConceptController {
         conceptDTO.setNarrowerConcepts(collectConceptToCui(conceptService.findNarrowerConceptsByCui(concept)));
 
         Set<String> semanticTypes = new HashSet<>();
-        for (var st: concept.getSemanticTypes()) {
+        for (var st : concept.getSemanticTypes()) {
             semanticTypes.add(st.getType());
         }
         conceptDTO.setSemanticTypes(semanticTypes);

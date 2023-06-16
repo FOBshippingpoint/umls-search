@@ -97,7 +97,7 @@ public class ConceptControllerTests {
 
     @Test
     void givenCui_whenFindByCui_thenReturnCui() throws Exception {
-        mockMvc.perform(get("/cuis/C0948008"))
+        mockMvc.perform(get("/concepts/C0948008"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
@@ -111,8 +111,17 @@ public class ConceptControllerTests {
 
     @Test
     void searchCuisByFreeText() throws Exception {
-        mockMvc.perform(get("/cuis/search/Ischemic Stroke"))
+        mockMvc.perform(get("/concepts?queryText=Ischemic Stroke"))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void whenFindByCui_thenTriggerNotFound() throws Exception {
+        String cui = "🤓🤓🤓";
+        mockMvc.perform(get("/concepts/" + cui))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(new ConceptNotFoundException(cui).getLocalizedMessage()));
     }
 }
