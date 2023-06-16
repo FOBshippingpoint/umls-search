@@ -43,7 +43,6 @@ def slurp(file: str) -> pd.DataFrame:
     df.columns = rrf_info[file]["col_names"]
     return df
 
-
 def spurt(df: pd.DataFrame, name: str):
     output_file = path_to_files / (name + ".csv")
     df.to_csv(output_file, index=False, header=True)
@@ -84,8 +83,8 @@ print(f"synonyms共有： {conc.shape[0]} 筆")
 
 rel = rel[(rel["CUI1"].isin(avail_cuis)) & (rel["CUI2"].isin(avail_cuis))]
 rel = rel[rel["REL"].isin(["RB", "RN"])]
-rel["REL"] = rel["REL"].replace({"RB": "BROADER", "RN": "NARROWER"})
 rel = rel.drop_duplicates(subset=["CUI1", "REL", "CUI2"])
+rel["REL"] = rel["REL"].replace({"RB": "BROADER", "RN": "NARROWER"})
 spurt(rel, "relationships")
 print(f"relationships共有： {rel.shape[0]} 筆")
 

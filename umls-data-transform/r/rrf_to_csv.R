@@ -1,6 +1,6 @@
 library(data.table)
 
-umls_data_path <- "../../data"
+umls_data_path <- "../data"
 
 read_rrf <- function(fname, select_cols) {
   fread(
