@@ -1,74 +1,103 @@
+from os import error
 import pandas as pd
 from pathlib import Path
 
 cwd = Path.cwd()
-path_to_files = cwd / "umls" / "data"
+path_to_files = cwd / "umls-data-transform" / "data"
+if not path_to_files.exists():
+    print(path_to_files, "<---data路徑不存在")
+    path_to_files = cwd.parent / "data"
+    if path_to_files.exists():
+        print(path_to_files, "<---改用此data路徑")
+    else:
+        path_to_files = cwd / "data"
+        if path_to_files.exists():
+            print(path_to_files, "<---改用此data路徑")
+        else:
+            error("找不到合適的data路徑")
+            exit(1)
 
-# Define the files and the columns to keep
-target_cols = {
-    "MRREL.RRF": [0, 3, 4],  # CUI1, REL, CUI2
-    "MRCONSO.RRF": [0, 1, 6, 11, 12, 14],  # CUI, LAT, ISPREF, SAB, TTY, STR
-    "MRDEF.RRF": [0, 4, 5],  # CUI, SAB, DEF
-    "MRSTY.RRF": [0, 3],  # CUI, STY
+# Define the files and columns to keep
+rrf_info = {
+    "MRCONSO.RRF": {
+        "col_nums": [0, 1, 2, 4, 11, 14],
+        "col_names": ["CUI", "LAT", "TS", "STT", "SAB", "STR"],
+    },
+    "MRREL.RRF": {"col_nums": [0, 3, 4], "col_names": ["CUI1", "REL", "CUI2"]},
+    "MRDEF.RRF": {"col_nums": [0, 4, 5], "col_names": ["CUI", "SAB", "DEF"]},
+    "MRSTY.RRF": {"col_nums": [0, 3], "col_names": ["CUI", "STY"]},
 }
 
 
-def slurp(file):
+def slurp(file: str) -> pd.DataFrame:
     cur_file = path_to_files / file
     print(f"reading {cur_file}...")
     df = pd.read_csv(
         cur_file,
         sep="|",
         header=None,
-        usecols=target_cols[file],
+        usecols=rrf_info[file]["col_nums"],
         dtype=str,
         index_col=False,
     )
+    df.columns = rrf_info[file]["col_names"]
     return df
 
 
-def spurt(df, name):
+def spurt(df: pd.DataFrame, name: str):
     output_file = path_to_files / (name + ".csv")
     df.to_csv(output_file, index=False, header=True)
 
 
 print("transforming RRF to CSV...")
 
-# ============================================================================
-df = slurp("MRCONSO.RRF")
-# C5392097 this thing doesn't have PN, only PEP
-df.columns = ["CUI", "LAT", "ISPREF", "SAB", "TTY", "STR"]
-df = df[df["LAT"] == "ENG"]  # Only keep rows where the language is English
+# Reading RRF files
+conc = slurp("MRCONSO.RRF")
+rel = slurp("MRREL.RRF")
+defn = slurp("MRDEF.RRF")
+sty = slurp("MRSTY.RRF")
 
-# collecting preferred names
-df_pn = df[df["TTY"] == "PN"][["CUI", "STR"]]
-spurt(df_pn, "cuis")
+# 只留下英文
+conc = conc[conc.LAT == "ENG"]
+print(f"ENG列共有：{conc.shape[0]}筆")
 
-# collecting synonyms
-df_syn = df[df["ISPREF"] == "Y"][["CUI", "STR", "SAB"]]
-df_syn = df_syn[df_syn["CUI"].isin(df_pn["CUI"])]
-spurt(df_syn, "synonyms")
+# avail_cuis是拿掉英文後非重複的MRCONSO CUI集合
+# 其他table中，除了avail_cuis以外的CUI皆需排除，避免fk not found
+avail_cuis = conc.CUI.unique()
+print(f"available CUIs共有{avail_cuis.shape[0]}筆")
 
-# ============================================================================
-df_rel = slurp("MRREL.RRF")
-df_rel.columns = ["CUI1", "REL", "CUI2"]
-df_rel = df_rel[df_rel["REL"].isin(["RB", "RN"])]
-df_rel["REL"] = df_rel["REL"].replace({"RB": "BROADER", "RN": "NARROWER"})
-df_rel = df_rel[df_rel["CUI1"].isin(df_pn["CUI"]) & df_rel["CUI2"].isin(df_pn["CUI"])]
-spurt(df_rel, "relationships")
 
-# ============================================================================
-df_def = slurp("MRDEF.RRF")
-df_def.columns = ["CUI", "SAB", "DEF"]
-df_def = df_def[df_def["CUI"].isin(df_pn["CUI"])]
-spurt(df_def, "definitions")
+# 根據mmlite的原始碼（ExtractMrconsoPreferredNames）
+# 擷取preferred name的方式是TS==P & STT=PF
+conc_pn = conc[(conc.TS == "P") & (conc.STT == "PF")]
+conc_pn = conc_pn[conc_pn.CUI.isin(avail_cuis)]
+print(f"TS = P & STT = PF可擷取出preferred name的列有{conc_pn.shape[0]}筆")
 
-# ============================================================================
-df_sty = slurp("MRSTY.RRF")
-df_sty.columns = ["CUI", "STY"]
-df_sty = df_sty[df_sty["CUI"].isin(df_pn["CUI"])]
-spurt(df_sty, "semantic_types")
+conc_pn = conc_pn.drop_duplicates(subset=["CUI"])
 
+spurt(conc_pn[["CUI", "STR"]], "concepts")
+print(f"concepts共有 {conc_pn.shape[0]} 筆")
+
+conc = conc[conc["CUI"].isin(avail_cuis)]
+spurt(conc[["CUI", "STR", "SAB"]], "synonyms")
+print(f"synonyms共有： {conc.shape[0]} 筆")
+
+rel = rel[(rel["CUI1"].isin(avail_cuis)) & (rel["CUI2"].isin(avail_cuis))]
+rel = rel[rel["REL"].isin(["RB", "RN"])]
+rel["REL"] = rel["REL"].replace({"RB": "BROADER", "RN": "NARROWER"})
+rel = rel.drop_duplicates(subset=["CUI1", "REL", "CUI2"])
+spurt(rel, "relationships")
+print(f"relationships共有： {rel.shape[0]} 筆")
+
+defn = defn[defn["CUI"].isin(avail_cuis)]
+spurt(defn, "definitions")
+print(f"definitions共有： {defn.shape[0]} 筆")
+
+sty = sty[sty["CUI"].isin(avail_cuis)]
+spurt(sty, "semantic_types")
+print(f"semantic_types共有： {sty.shape[0]} 筆")
+
+print("轉換完成")
 print(
     f"\noutput at {path_to_files}:\ncuis.csv\nsynonyms.csv\nrelationships.csv\ndefinitions.csv\nsemantic_types.csv"
 )
