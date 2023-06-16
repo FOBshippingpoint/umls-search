@@ -4,12 +4,32 @@
 
 To get started with UMLS Search Boot, follow the steps below:
 
-1. Set up Environment Variables:
+1. Download MetaMapLite:
+   - Visit the [NLM MetaMapLite](https://lhncbc.nlm.nih.gov/ii/tools/MetaMap/run-locally/MetaMapLite.html) page.
+   - Download `2022AB UMLS Level 0+4+9 DataSet` zip file.
+   - Extract the zip file.
+   - Locate the `metamaplite-<version>-standalone.jar` at `target` directory.
+   - Install MetaMapLite jar to local Maven repository.
+        ```shell
+        # windows powershell請把\換成`或移除\並寫成一行
+        mvnw install:install-file \
+            -Dfile=<path to metamaplite-version-standalone.jar> \
+            -DgroupId=gov.nih.nlm.nls \
+            -DartifactId=metamaplite \
+            -Dversion=<version> \
+            -Dpackaging=jar \
+            -DgeneratePom=true
+        ```
+   - Configure MetaMapLite directory:
+       - Locate the `src/main/resources/.env` file.
+       - Set the `MMLITE_DIR` variable to the path that contains the `public_mm_lite` directory. For example, `/home/user/metamaplite`. 
+   
+2. Set up Environment Variables:
    - Locate the `src/main/resources/.env` file.
    - Review the provided `.env.example` file for detailed instructions on setting up the required environment variables.
    - Make sure to configure the environment variables correctly based on your specific setup.
 
-2. Run the Application:
+3. Run the Application:
    - Open a terminal or command prompt.
    - Navigate to the project root directory.
    - Execute the following command:
