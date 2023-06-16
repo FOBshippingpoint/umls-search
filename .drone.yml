@@ -3,14 +3,27 @@ type: docker
 name: umls-search-server
 
 steps:
+  - name: stop service
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: ssh_host
+      username:
+        from_secret: ssh_username
+      password:
+        from_secret: ssh_password
+      command_timeout: 2m
+      script:
+        - systemctl --user stop umls-search
+
   - name: build
     image: maven:3.9.2-eclipse-temurin-17-alpine
     volumes:
-      - name: metamaplite_jar
-        path: /tmp/metamaplite.jar
       - name: metamaplite_data
         path: /tmp/metamaplite
-      - name: target_jar_path
+      - name: metamaplite_jar
+        path: /tmp/metamaplite.jar
+      - name: target_path
         path: /var/umls-search
     environment:
       MMLITE_DIR: /tmp/metamaplite
@@ -18,16 +31,29 @@ steps:
       - mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=/tmp/metamaplite.jar
       - mvn -f server/pom.xml install -Pci -Ddir=/var/umls-search -DfinalName=server
 
+  - name: start service
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: ssh_host
+      username:
+        from_secret: ssh_username
+      password:
+        from_secret: ssh_password
+      command_timeout: 2m
+      script:
+        - systemctl --user start umls-search
+
 volumes:
   - name: metamaplite_data
     host:
-      path: /home/ncuuser/ci/metamaplite
+      path: /home/umlssearch/metamaplite
   - name: metamaplite_jar
     host:
-      path: /home/ncuuser/ci/metamaplite-3.6.2rc8-standalone.jar
-  - name: target_jar_path
+      path: /home/umlssearch/metamaplite-3.6.2rc8-standalone.jar
+  - name: target_path
     host:
-      path: /home/ncuuser/deploy/umls-search
+      path: /home/umlssearch/target
 
 trigger:
   branch:
