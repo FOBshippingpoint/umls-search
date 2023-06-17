@@ -29,7 +29,11 @@ steps:
       MMLITE_DIR: /tmp/metamaplite
     commands:
       - mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=/tmp/metamaplite.jar
-      - mvn -f server/pom.xml install -Pci -Ddir=/var/umls-search -DfinalName=server
+      - |
+        mvn -f server/pom.xml install \
+          -Pci \
+          -Ddir=/var/umls-search \
+          -DfinalName=server
 
   - name: start service
     image: appleboy/drone-ssh
