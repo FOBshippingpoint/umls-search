@@ -564,3 +564,22 @@ $ mvn install
 ## References
 
 - 除了這章節外，要操作使用 UMLS 建議都看一下: [3Metathesaurus - Rich Release Format (RRF)](https://www.ncbi.nlm.nih.gov/books/NBK9685/)
+
+## MetaMapLite JAR
+
+1. 下載JAR
+
+請先至[官網](https://lhncbc.nlm.nih.gov/ii/tools/MetaMap/run-locally/MetaMapLite.html#Downloads)下載mmlite jar
+
+2. 安裝JAR至.m2
+
+```sh
+# windows powershell請把\換成`
+mvnw install:install-file \
+     -Dfile=<mmlite jar 檔案位置> \
+     -DgroupId=gov.nih.nlm.nls \
+     -DartifactId=metamaplite \
+     -Dversion=3.6.2rc8 \
+     -Dpackaging=jar \
+     -DgeneratePom=true
+```
