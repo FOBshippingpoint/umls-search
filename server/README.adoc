@@ -1,65 +1,128 @@
-# UMLS Search Boot 🍃🥾
+= UMLS Search Boot 🍃🥾
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 
-## Getting Started
+:toc:
+:toc-title: 目錄
+:toc-placement!:
+
+toc::[]
+
+== Getting Started
 
 To get started with UMLS Search Boot, follow the steps below:
 
-1. Download MetaMapLite:
-   - Visit the [NLM MetaMapLite](https://lhncbc.nlm.nih.gov/ii/tools/MetaMap/run-locally/MetaMapLite.html) page.
-   - Download `2022AB UMLS Level 0+4+9 DataSet` zip file.
-   - Extract the zip file.
-   - Locate the `metamaplite-<version>-standalone.jar` at `target` directory.
-   - Install MetaMapLite jar to local Maven repository.
-        ```shell
-        # windows powershell請把\換成`或移除\並寫成一行
-        mvnw install:install-file \
-            -Dfile=<path to metamaplite-version-standalone.jar> \
-            -DgroupId=gov.nih.nlm.nls \
-            -DartifactId=metamaplite \
-            -Dversion=<version> \
-            -Dpackaging=jar \
-            -DgeneratePom=true
-        ```
-   - Configure MetaMapLite directory:
-       - Locate the `src/main/resources/.env` file.
-       - Set the `MMLITE_DIR` variable to the path that contains the `public_mm_lite` directory. For example, `/home/user/metamaplite`. 
+. Download MetaMapLite:
+* Visit the https://lhncbc.nlm.nih.gov/ii/tools/MetaMap/run-locally/MetaMapLite.html[NLM MetaMapLite] page.
+* Download `2022AB UMLS Level 0+4+9 DataSet` zip file.
+* Extract the zip file.
+* Locate the `metamaplite-_<version>_-standalone.jar` at `target` directory.
+* Install MetaMapLite jar to local Maven repository.
++
+[source, console]
+----
+# windows powershell請把\換成`或移除\並寫成一行
+mvnw install:install-file \
+    -Dfile=<path to metamaplite-version-standalone.jar> \
+    -DgroupId=gov.nih.nlm.nls \
+    -DartifactId=metamaplite \
+    -Dversion=<version> \
+    -Dpackaging=jar \
+    -DgeneratePom=true
+----
+
+* Configure MetaMapLite directory:
+** Locate the `src/main/resources/.env` file.
+** Set the `MMLITE_DIR` variable to the path that contains the `public_mm_lite` directory. For example, `/home/user/metamaplite`. 
    
-2. Set up Environment Variables:
-   - Locate the `src/main/resources/.env` file.
-   - Review the provided `.env.example` file for detailed instructions on setting up the required environment variables.
-   - Make sure to configure the environment variables correctly based on your specific setup.
+. Set up Environment Variables:
+* Locate the `src/main/resources/.env` file.
+* Review the provided `.env.example` file for detailed instructions on setting up the required environment variables.
+* Make sure to configure the environment variables correctly based on your specific setup.
 
-3. Run the Application:
-   - Open a terminal or command prompt.
-   - Navigate to the project root directory.
-   - Execute the following command:
-     ```sh
-     mvn spring-boot:run
-     ```
-   - This command will start the application listening on http://localhost:8080 , your can change the port at .env file or application.properties.
+. Run the Application:
+* Open a terminal or command prompt.
+* Navigate to the project root directory.
+* Execute the following command:
++
+[source, console]
+----
+mvn spring-boot:run
+----
+* This command will start the application listening on http://localhost:8080 , your can change the port at .env file or application.properties.
 
-## Testing
+== Testing
 
 To test UMLS Search Boot, you have two options:
 
-1. Using IntelliJ IDEA:
-   - Open IntelliJ IDEA.
-   - Navigate to the `src/test/java` directory.
-   - Right-click on the directory and select "Run 'All Tests'".
-   - IntelliJ IDEA will execute all the tests and display the results.
+. Using IntelliJ IDEA:
+* Open IntelliJ IDEA.
+* Navigate to the `src/test/java` directory.
+* Right-click on the directory and select "Run 'All Tests'".
+* IntelliJ IDEA will execute all the tests and display the results.
 
-2. Using Maven:
-   - Open a terminal or command prompt.
-   - Navigate to the project root directory.
-   - Execute the following command:
-     ```sh
-     mvn test
-     ```
-   - Maven will run all the tests in the project and provide the test results.
+. Using Maven:
+* Open a terminal or command prompt.
+* Navigate to the project root directory.
+* Execute the following command:
++
+[source, console]
+----
+mvn test
+----
+* Maven will run all the tests in the project and provide the test results.
 
-## API
+== Build
 
-### Search Concept by CUI
+. Build jar file
+[source, console]
+----
+mvn install \
+  -Pci \ <1>
+  -Ddir=<output directory> \ <2>
+  -DfinalName=server 
+----
+<1> Use profile called `ci`, see https://maven.apache.org/guides/introduction/introduction-to-profiles.html
+<2> Without this line, it would export to `umls-search/server/target`
+
+== Deployment
+
+. Create service file.
++
+[%linenums,text]
+----
+# At /home/umlssearch/.config/systemd/user/umls-search.service
+[Unit]
+Description=UMLS Search Service
+After=network.target
+
+[Service]
+EnvironmentFile=/home/umlssearch/.env <1>
+ExecStart=/usr/bin/java -jar /home/umlssearch/target/server.jar <2>
+ExecStop=/bin/kill -15 $MAINPID <3>
+SuccessExitStatus=143
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+----
+<1> You can configure .env file here.
+<1> Or you can change file path as your built jar path.
+<3> See https://www.baeldung.com/linux/run-java-application-as-service.
+
+. Place `metamaplite` folder into `/home/umlssearch/`.
+. Run `loginctl enable-linger umlssearch`, more information see https://wiki.archlinux.org/title/systemd/User#Automatic_start-up_of_systemd_user_instances
+. Run `systemctl --user daemon-reload`
+. At `/home/umlssearch/.config/systemd/user/`, Run `systemctl --user enable --now umls-search`
+
+== API
+
+=== Search Concept by CUI
 
 Search for a concept using the Concept Unique Identifier (CUI).
 
@@ -68,14 +131,16 @@ Search for a concept using the Concept Unique Identifier (CUI).
 - Parameters: `cui` (required)
 - Example: http://localhost:8080/api/v1/concepts/C5397597
 
-#### Response:
+==== Response:
 - Status Code: 200 (OK)
 - Response Format: JSON
 - Example Response:
-<details>
-<summary>API Response Example (click to expand)</summary>
 
-```json
+.Click to see response (very long)
+[%collapsible]
+====
+[source, json]
+----
 {
   "cui": "C0948008",
   "preferredName": "Ischemic stroke",
@@ -285,41 +350,48 @@ Search for a concept using the Concept Unique Identifier (CUI).
     "C5392833"
   ]
 }
-```
-</details>
+----
+====
 
-#### Error Responses:
-- Status Code: 404 (Not Found)
-- Response Format: text/plain
-- Example Response:
-    ```text
-    Could not found concept cui: <cui>
-    ```
+==== Error Responses:
+* Status Code: 404 (Not Found)
+* Response Format: text/plain
+* Example Response:
++
+[source, text]
+----
+Could not found concept cui: <cui>
+----
 
-### Search Concepts by Freetext
+=== Search Concepts by Freetext
 
 Search for concepts using the freetext.
 
 
-- Endpoint: `/api/v1/concepts`
-- Method: GET
-- Parameters
+* Endpoint: `/api/v1/concepts`
+* Method: GET
+* Parameters
 
-| Parameter   | Type   | Required | Description              |
-|-------------|--------|----------|--------------------------|
-| queryText   | string | Yes      | The freetext query string |
+[options="header"]
+|==================
+| Parameter | Type  | Required | Description
+| queryText | string| Yes      | The freetext query string
+|==================
 
-- Example: http://localhost:8080/api/v1/concepts?queryText=root
-#### Response:
+* Example: http://localhost:8080/api/v1/concepts?queryText=root
 
-- Status Code: 200 (OK)
-- Response Format: JSON
-- Example Response: "array of cui (search for concept by cui example)"
+==== Response:
 
-#### Error Responses:
-- Status Code: 500 (Internal Server Error)
-- Response Format: text/plain
-- Example Response:
-    ```text
-    Error while processing freetext to cuis
-    ```
+* Status Code: 200 (OK)
+* Response Format: JSON
+* Example Response: "array of cui (search for concept by cui example)"
+
+==== Error Responses:
+* Status Code: 500 (Internal Server Error)
+* Response Format: text/plain
+* Example Response:
++
+[source, text]
+----
+Error while processing freetext to cuis
+----
