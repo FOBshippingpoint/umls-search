@@ -3,6 +3,7 @@ package com.sscs.concept;
 import com.sscs.definition.Definition;
 import com.sscs.metamaplite.MetaMapLiteService;
 import com.sscs.synonym.Synonym;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +43,11 @@ public class ConceptController {
         return conceptDTOs;
     }
 
-    private List<String> collectConceptToCui(Collection<Concept> concepts) {
-        List<String> result = new ArrayList<>();
+    private List<RelatedConcept> collectConceptToRelatedConcepts(Collection<Concept> concepts) {
+        List<RelatedConcept> result = new ArrayList<>();
         for (var c : concepts) {
-            result.add(c.getCui());
+            var relatedConcept = new RelatedConcept(c.getCui(), c.getPreferredName());
+            result.add(relatedConcept);
         }
         return result;
     }
@@ -57,8 +59,8 @@ public class ConceptController {
         conceptDTO.setDefinitions(concept.getDefinitions());
         conceptDTO.setSynonyms(concept.getSynonyms());
 
-        conceptDTO.setBroaderConcepts(collectConceptToCui(conceptService.findBroaderConceptsByCui(concept)));
-        conceptDTO.setNarrowerConcepts(collectConceptToCui(conceptService.findNarrowerConceptsByCui(concept)));
+        conceptDTO.setBroaderConcepts(collectConceptToRelatedConcepts(conceptService.findBroaderConceptsByCui(concept)));
+        conceptDTO.setNarrowerConcepts(collectConceptToRelatedConcepts(conceptService.findNarrowerConceptsByCui(concept)));
 
         Set<String> semanticTypes = new HashSet<>();
         for (var st : concept.getSemanticTypes()) {
@@ -78,6 +80,16 @@ class ConceptDTO {
     Collection<Definition> definitions;
     Collection<Synonym> synonyms;
     Collection<String> semanticTypes;
-    Collection<String> broaderConcepts;
-    Collection<String> narrowerConcepts;
+    Collection<RelatedConcept> broaderConcepts;
+    Collection<RelatedConcept> narrowerConcepts;
+}
+
+// Jackson似乎需要Getter才能轉json
+// 實際上就是Concept Class，without entity annotation
+// 或許未來可以改進
+@Getter
+@AllArgsConstructor
+class RelatedConcept {
+    String cui;
+    String preferredName;
 }
