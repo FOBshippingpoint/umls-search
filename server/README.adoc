@@ -7,7 +7,6 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 :toc:
-:toc-title: 目錄
 :toc-placement!:
 
 toc::[]
@@ -78,7 +77,7 @@ mvn test
 
 == Build
 
-Build jar file
+Build JAR file
 [source, console]
 ----
 mvn install \
@@ -118,6 +117,80 @@ WantedBy=multi-user.target
 . Run `loginctl enable-linger umlssearch`, more information see https://wiki.archlinux.org/title/systemd/User#Automatic_start-up_of_systemd_user_instances
 . Run `systemctl --user daemon-reload`
 . At `/home/umlssearch/.config/systemd/user/`, Run `systemctl --user enable --now umls-search`
+
+=== Continuous Integration
+
+We use https://www.drone.io/[Drone CI]. The configuration is defined in the `.drone.yml` file.
+[source, yaml]
+----
+kind: pipeline
+type: docker
+name: umls-search-server
+
+steps:
+  - name: stop service
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: ssh_host
+      username:
+        from_secret: ssh_username
+      key:
+        from_secret: ssh_key
+      command_timeout: 2m
+      script:
+        - systemctl --user stop umls-search <.>
+
+  - name: build
+    image: maven:3.9.2-eclipse-temurin-17-alpine
+    volumes:
+      - name: metamaplite_data
+        path: /tmp/metamaplite
+      - name: metamaplite_jar
+        path: /tmp/metamaplite.jar
+      - name: target_path
+        path: /var/umls-search
+    environment:
+      MMLITE_DIR: /tmp/metamaplite
+    commands: <.>
+      - mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=/tmp/metamaplite.jar
+      - |
+        mvn -f server/pom.xml install \
+          -Pci \
+          -Ddir=/var/umls-search \
+          -DfinalName=server
+
+  - name: start service
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: ssh_host
+      username:
+        from_secret: ssh_username
+      key:
+        from_secret: ssh_key
+      command_timeout: 2m
+      script:
+        - systemctl --user start umls-search <.>
+
+volumes:
+  - name: metamaplite_data
+    host:
+      path: /home/umlssearch/metamaplite <.>
+  - name: metamaplite_jar
+    host:
+      path: /home/umlssearch/metamaplite-3.6.2rc8-standalone.jar <.>
+  - name: target_path
+    host:
+      path: /home/umlssearch/target
+----
+<.> Stop service, prepare for update.
+<.> Build JAR.
+* Install metamaplite to https://www.baeldung.com/maven-local-repository[local .m2 repo].
+* Build jar to https://docs.docker.com/storage/volumes/[volume] `/var/umls-search`.
+<.> Start service.
+<.> metamaplite JAR volume, the docker container can access the `/home/umlssearch/metamaplite` directory as `/tmp/metamaplite`.
+<.> Same as above.
 
 == API
 
