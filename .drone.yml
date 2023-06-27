@@ -10,8 +10,8 @@ steps:
         from_secret: ssh_host
       username:
         from_secret: ssh_username
-      password:
-        from_secret: ssh_password
+      key:
+        from_secret: ssh_key
       command_timeout: 2m
       script:
         - systemctl --user stop umls-search
@@ -42,8 +42,8 @@ steps:
         from_secret: ssh_host
       username:
         from_secret: ssh_username
-      password:
-        from_secret: ssh_password
+      key:
+        from_secret: ssh_key
       command_timeout: 2m
       script:
         - systemctl --user start umls-search
@@ -58,7 +58,3 @@ volumes:
   - name: target_path
     host:
       path: /home/umlssearch/target
-
-trigger:
-  branch:
-    - production
