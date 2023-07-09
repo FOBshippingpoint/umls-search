@@ -1,0 +1,7 @@
+# 先建立table
+# 進入本目錄，再進入psql輸入以下指令
+\copy public.concepts (cui, preferred_name) FROM 'concetps.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8' QUOTE '\"';
+\copy public.definitions (concept, source_name, definition_id) FROM 'definitions.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8' QUOTE '\"';
+\copy public.relationships (concept1, rel_type, concept2) FROM 'relationships.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8' QUOTE '\"';
+\copy public.semantic_types (concept, type) FROM 'semantic_types.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8' QUOTE '\"';
+\copy public.synonyms (concept, term, source_name) FROM 'synonyms.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8' QUOTE '\"';
