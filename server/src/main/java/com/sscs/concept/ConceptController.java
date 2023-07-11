@@ -46,7 +46,8 @@ public class ConceptController {
     private List<RelatedConcept> collectConceptToRelatedConcepts(Collection<Concept> concepts) {
         List<RelatedConcept> result = new ArrayList<>();
         for (var c : concepts) {
-            var relatedConcept = new RelatedConcept(c.getCui(), c.getPreferredName());
+            var firstDef = c.getDefinitions().stream().findFirst().orElse(new Definition());
+            var relatedConcept = new RelatedConcept(c.getCui(), c.getPreferredName(), firstDef);
             result.add(relatedConcept);
         }
         return result;
@@ -92,4 +93,5 @@ class ConceptDTO {
 class RelatedConcept {
     String cui;
     String preferredName;
+    Definition definition;
 }
