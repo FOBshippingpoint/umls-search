@@ -107,6 +107,7 @@ public class ConceptControllerTests {
                 .andExpect(jsonPath("$.semanticTypes").isNotEmpty())
                 .andExpect(jsonPath("$.broaderConcepts", hasSize(3)))
                 .andExpect(jsonPath("$.broaderConcepts[0].cui").value("C2733158"))
+                .andExpect(jsonPath("$.broaderConcepts[0].definition").isMap())
                 .andExpect(jsonPath("$.narrowerConcepts", hasSize(1)));
     }
 
